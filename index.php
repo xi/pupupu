@@ -154,7 +154,8 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
             }
             rrmdir("../_content$path");
             rrmdir("..$path");
-            header('Location: ?path=', true, 302);
+            $target = dirname($path);
+            header("Location: ?path=$target", true, 302);
         } else {
             // TODO validate form
             setData($path, $_POST);
