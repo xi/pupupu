@@ -8,14 +8,8 @@
     <link rel="stylesheet" type="text/css" href="static/main.css">
 </head>
 <body>
-    <form class="l-main" method="POST">
-        {% for key, value in data.yml %}
-            <label>
-                {{ key }}
-                <input type="text" name="{{ key }}" value="{{ value }}">
-            </label>
-        {% endfor %}
 
+    <form method="POST">
         <label>
             Body
             <textarea name="md">{{ data.md }}</textarea>
