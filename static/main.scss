@@ -8,3 +8,7 @@ textarea {
 	width: 100%;
 	margin-bottom: $spacer;
 }
+
+.button--danger {
+	@include button-color(red, white, darkred);
+}
