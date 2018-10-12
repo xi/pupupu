@@ -57,9 +57,8 @@ function getSubpages($path)
 function validatePath($path)
 {
     if (
-        strlen($path) === 0 ||
-        $path[0] !== '/' ||
-        (strlen($path) > 1 && substr($path, -1) === '/') ||
+        (strlen($path) > 1 && $path[0] !== '/') ||
+        substr($path, -1) === '/' ||
         strpos($path, '.') !== false
     ) {
         http_response_code(400);
@@ -95,11 +94,10 @@ function render($path, $verbose=false)
     file_put_contents("..$path/index.html", $html);
 }
 
-function renderAll($path='/', $verbose=false)
+function renderAll($path='', $verbose=false)
 {
     render($path, $verbose);
-    $trimmed = rtrim($path, '/');
-    $dir = "../_content$trimmed";
+    $dir = "../_content$path";
     foreach (scandir($dir) as $name) {
         if ($name !== '.' && $name !== '..' && is_dir("$dir/$name")) {
             renderAll("$trimmed/$name", $verbose);
@@ -111,8 +109,8 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     $loader = new Twig_Loader_Filesystem('templates');
     $twig = new Twig_Environment($loader);
 
-    if (empty($_GET['path'])) {
-        header("Location: ?path=/", true, 302);
+    if (empty($_GET['path']) && $_GET['path'] !== '') {
+        header("Location: ?path=", true, 302);
     } elseif ($_GET['path'] === '_site') {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo $twig->render('site.html', array(
@@ -134,13 +132,13 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
                 'path' => $path,
             ));
         } elseif ($_POST['delete']) {
-            if ($path === '/') {
+            if ($path === '') {
                 http_response_code(400);
                 die();
             }
             rrmdir("../_content$path");
-            rrmdir("..$path/");
-            header("Location: ?path=/", true, 302);
+            rrmdir("..$path");
+            header("Location: ?path=", true, 302);
         } else {
             // TODO validate form
             setData($path, $_POST);
