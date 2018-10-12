@@ -1,0 +1,8 @@
+{
+  "name": "pupupu",
+  "version": "1.0.0",
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "simplemde": "^1.11.2"
+  }
+}

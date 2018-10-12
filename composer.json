@@ -1,0 +1,7 @@
+{
+    "require": {
+        "erusev/parsedown": "^1.7",
+        "symfony/yaml": "^3.4",
+        "twig/twig": "^2.0"
+    }
+}

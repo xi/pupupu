@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/simplemde/dist/simplemde.min.css">
+</head>
+<body>
+    <form class="l-main" method="POST">
+        {% for key, value in data.yml %}
+            <label>
+                {{ key }}
+                <input type="text" name="{{ key }}" value="{{ value }}">
+            </label>
+        {% endfor %}
+
+        <label>
+            Body
+            <textarea name="md">{{ data.md }}</textarea>
+        </label>
+
+        <label>
+            Metadata
+            <textarea name="yml">{{ data.yml }}</textarea>
+        </label>
+
+        <input type="submit" class="btn" value="Save">
+        <input type="submit" class="btn btn--danger" name="delete" value="Löschen">
+    </form>
+
+    <nav aria-label="Subpages">
+        <ul>
+            {% for name, _path in subpages %}
+                <li><a href="?path={{ _path }}">{{ name }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+    <form>
+        <input name="path" value="{{ path }}">
+        <button>Edit</button>
+    </form>
+
+    <a href="{{ path }}/">View</a>
+
+    <script src="node_modules/simplemde/dist/simplemde.min.js"></script>
+    <script src="static/main.js"></script>
+</body>
+</html>
