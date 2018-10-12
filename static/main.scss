@@ -17,3 +17,12 @@ textarea {
 textarea {
 	max-height: 60vh;
 }
+
+header {
+	border-bottom: 1px solid $color-border;
+	margin-bottom: 2 * $spacer;
+	padding: ($padding / 2) 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}

@@ -18,6 +18,20 @@ function rrmdir($path)
     rmdir($path);
 }
 
+function validatePath($path)
+{
+    if (
+        (strlen($path) > 1 && $path[0] !== '/') ||
+        substr($path, -1) === '/' ||
+        strpos($path, '.') !== false
+    ) {
+        http_response_code(400);
+        die();
+    } else {
+        return $path;
+    }
+}
+
 function getData($path, $raise=false)
 {
     $data = array(
@@ -54,24 +68,23 @@ function getSubpages($path)
     return $subpages;
 }
 
-function validatePath($path)
+function getBreadcrumbs($path)
 {
-    if (
-        (strlen($path) > 1 && $path[0] !== '/') ||
-        substr($path, -1) === '/' ||
-        strpos($path, '.') !== false
-    ) {
-        http_response_code(400);
-        die();
-    } else {
-        return $path;
+    $breadcrumbs = array('home' => '');
+    $parts = explode('/', $path);
+    for ($i = 1; $i < count($parts); $i++) {
+        $name = $parts[$i];
+        $path = implode('/', array_slice($parts, 0, $i + 1));
+        $breadcrumbs[$name] = $path;
     }
+    return $breadcrumbs;
 }
 
 function render($path, $verbose=false)
 {
     $parsedown = new Parsedown();
-    $parsedown->setSafeMode(true);
+    // $parsedown->setMarkupEscaped(true);
+    // $parsedown->setSafeMode(true);
     $loader = new Twig_Loader_Filesystem('../_templates');
     $twig = new Twig_Environment($loader);
 
@@ -130,6 +143,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
                 'data' => $data,
                 'subpages' => getSubpages($path),
                 'path' => $path,
+                'breadcrumbs' => getBreadcrumbs($path),
             ));
         } elseif ($_POST['delete']) {
             if ($path === '') {

@@ -1,28 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form method="POST">
-        <label>
-            Body
-            <textarea name="md">{{ data.md }}</textarea>
-        </label>
-
-        <label>
-            Metadata
-            <textarea name="yml">{{ data.yml }}</textarea>
-        </label>
-
-        <input type="submit" value="Save">
-        <input type="submit" class="button--danger" name="delete" value="Löschen">
-    </form>
-
-    <nav aria-label="Subpages">
-        <ul>
-            {% for name, _path in subpages %}
-                <li><a href="?path={{ _path }}">{{ name }}</a></li>
+    <header>
+        <nav aria-label="Breadcrumbs">
+            {% for name, path in breadcrumbs %}
+                <a href="?path={{ path }}">{{ name }}</a> /
             {% endfor %}
-        </ul>
-    </nav>
+        </nav>
+        <nav>
+            <a href="?path=_site">site config</a>
+            <a href="{{ path }}/" class="button">View</a>
+        </nav>
+    </header>
 
-    <a href="{{ path }}/" class="button">View</a>
+    <main>
+        <form method="POST">
+            <label>
+                Body
+                <textarea name="md">{{ data.md }}</textarea>
+            </label>
+
+            <label>
+                Metadata
+                <textarea name="yml">{{ data.yml }}</textarea>
+            </label>
+
+            <input type="submit" value="Save">
+            <input type="submit" class="button--danger" name="delete" value="Löschen">
+        </form>
+    </main>
+
+    <aside>
+        <nav aria-label="Subpages">
+            <ul>
+                {% for name, _path in subpages %}
+                    <li><a href="?path={{ _path }}">{{ name }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </aside>
 {% endblock %}
