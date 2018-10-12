@@ -116,21 +116,19 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     $loader = new Twig_Loader_Filesystem('templates');
     $twig = new Twig_Environment($loader);
 
-    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-        if (empty($_GET['path'])) {
-            header("Location: ?path=/", true, 302);
-        } else {
-            $path = validatePath($_GET['path']);
+    if (empty($_GET['path'])) {
+        header("Location: ?path=/", true, 302);
+    } else {
+        $path = validatePath($_GET['path']);
+
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $data = getData($path);
             echo $twig->render('form.html', array(
                 'data' => $data,
                 'subpages' => getSubpages($path),
                 'path' => $path,
             ));
-        }
-    } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if ($_POST['delete']) {
-            $path = validatePath($_GET['path']);
+        } elseif ($_POST['delete']) {
             if ($path === '/') {
                 http_response_code(400);
                 die();
@@ -139,16 +137,12 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
             rrmdir("..$path/");
             header("Location: ?path=/", true, 302);
         } else {
-            $path = validatePath($_GET['path']);
-
             // TODO validate form
             setData($path, $_POST);
             render($path);
 
             header("Location: ", true, 302);
         }
-    } else {
-        http_response_code(405);
     }
 } else {
     renderAll('/', true);
