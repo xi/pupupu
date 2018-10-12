@@ -12,3 +12,8 @@ textarea {
 .button--danger {
 	@include button-color(red, white, darkred);
 }
+
+.CodeMirror-scroll,
+textarea {
+	max-height: 60vh;
+}
