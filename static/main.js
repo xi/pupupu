@@ -9,6 +9,7 @@
     };
 
     new SimpleMDE({
+        element: document.querySelector('textarea[name="md"]'),
         spellChecker: false,
     });
 
