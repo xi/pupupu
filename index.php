@@ -54,11 +54,6 @@ function getSubpages($path)
     return $subpages;
 }
 
-function getSite()
-{
-    return Yaml::parseFile("../_site/site.yml");
-}
-
 function validatePath($path)
 {
     if (
@@ -89,7 +84,7 @@ function render($path, $verbose=false)
     $template = $data['yml']['template'] ?? 'base.html';
     $html = $twig->render($template, array(
         'page' => Yaml::parse($data['yml']),
-        'site' => getSite(),
+        'site' => Yaml::parseFile("../_site/site.yml"),
         'body' => $parsedown->text($data['md']),
         'date' => time(),
     ));
@@ -118,12 +113,22 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
 
     if (empty($_GET['path'])) {
         header("Location: ?path=/", true, 302);
+    } elseif ($_GET['path'] === '_site') {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            echo $twig->render('site.html', array(
+                'yml' => file_get_contents("../_site/site.yml"),
+            ));
+        } else {
+            file_put_contents("../_site/site.yml", $_POST['yml']);
+            renderAll();
+            header("Location: ", true, 302);
+        }
     } else {
         $path = validatePath($_GET['path']);
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $data = getData($path);
-            echo $twig->render('form.html', array(
+            echo $twig->render('page.html', array(
                 'data' => $data,
                 'subpages' => getSubpages($path),
                 'path' => $path,
@@ -140,7 +145,6 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
             // TODO validate form
             setData($path, $_POST);
             render($path);
-
             header("Location: ", true, 302);
         }
     }
