@@ -4,5 +4,8 @@
   "dependencies": {
     "font-awesome": "^4.7.0",
     "simplemde": "^1.11.2"
+  },
+  "devDependencies": {
+    "mfbs": "^4.0.0"
   }
 }

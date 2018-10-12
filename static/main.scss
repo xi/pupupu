@@ -1,0 +1,10 @@
+@import "../node_modules/mfbs/sass/variables";
+@import "../node_modules/mfbs/sass/base";
+@import "../node_modules/mfbs/sass/form";
+@import "../node_modules/mfbs/sass/layout";
+
+textarea {
+	display: block;
+	width: 100%;
+	margin-bottom: $spacer;
+}
