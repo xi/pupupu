@@ -23,6 +23,11 @@ header {
 	margin-bottom: 2 * $spacer;
 	padding: ($padding / 2) 0;
 	display: flex;
+	flex-flow: row wrap;
 	justify-content: space-between;
 	align-items: center;
+}
+
+header form {
+	display: inline;
 }

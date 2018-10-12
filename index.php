@@ -62,7 +62,7 @@ function getSubpages($path)
     $subpages = array();
     foreach (scandir($p) as $name) {
         if ($name !== '.' && $name !== '..' && is_dir("$p/$name")) {
-            $subpages[$name] = $path === '/' ? "/$name" : "$path/$name";
+            $subpages[] = $name;
         }
     }
     return $subpages;
@@ -123,7 +123,9 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     $twig = new Twig_Environment($loader);
 
     if (empty($_GET['path']) && $_GET['path'] !== '') {
-        header("Location: ?path=", true, 302);
+        header('Location: ?path=', true, 302);
+    } elseif (isset($_GET['add'])) {
+        header("Location: ?path=${_GET['path']}/${_GET['add']}", true, 302);
     } elseif ($_GET['path'] === '_site') {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo $twig->render('site.html', array(
@@ -152,12 +154,12 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
             }
             rrmdir("../_content$path");
             rrmdir("..$path");
-            header("Location: ?path=", true, 302);
+            header('Location: ?path=', true, 302);
         } else {
             // TODO validate form
             setData($path, $_POST);
             render($path);
-            header("Location: ", true, 302);
+            header('Location: ', true, 302);
         }
     }
 } else {
