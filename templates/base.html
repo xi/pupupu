@@ -8,7 +8,20 @@
     <link rel="stylesheet" type="text/css" href="static/main.css">
 </head>
 <body>
-    {% block content %}{% endblock %}
+    <header>
+        <nav aria-label="Breadcrumbs">
+            {% block breadcrumbs %}
+                <a href="?path=">home</a> /
+            {% endblock %}
+        </nav>
+        <nav>
+            <a href="?path=_site">site config</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block main %}{% endblock %}
+    </main>
 
     <script src="node_modules/simplemde/dist/simplemde.min.js"></script>
     <script src="static/main.js"></script>

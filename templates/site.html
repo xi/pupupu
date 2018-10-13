@@ -1,23 +1,12 @@
 {% extends 'base.html' %}
 
-{% block content %}
-    <header>
-        <nav aria-label="Breadcrumbs">
-            <a href="?path=">home</a> /
-        </nav>
-        <nav>
-            <a href="?path=_site">site config</a>
-        </nav>
-    </header>
+{% block main %}
+    <form method="POST">
+        <label>
+            Metadata
+            <textarea name="yml">{{ yml }}</textarea>
+        </label>
 
-    <main>
-        <form method="POST">
-            <label>
-                Metadata
-                <textarea name="yml">{{ yml }}</textarea>
-            </label>
-
-            <input type="submit" value="Save">
-        </form>
-    </main>
+        <input type="submit" value="Save">
+    </form>
 {% endblock %}
