@@ -139,6 +139,22 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
             renderAll();
             header("Location: ", true, 302);
         }
+    } elseif ($_GET['path'] === '_uploads') {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            echo $twig->render('uploads.html', array(
+                'files' => array_filter(scandir('../uploads/'), function($file) {
+                    return is_file("../uploads/$file");
+                }),
+            ));
+        } elseif (isset($_FILES['file'])) {
+            mkdirp('../uploads');
+            $f = $_FILES['file'];
+            move_uploaded_file($f['tmp_name'], '../uploads/' . $f['name']);
+            header("Location: ", true, 302);
+        } else {
+            unlink('../uploads/' . $_POST['file']);
+            header("Location: ", true, 302);
+        }
     } else {
         $path = validatePath($_GET['path']);
 

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <ul>
+        {% for file in files %}
+            <li>
+                <a href="/uploads/{{ file }}" target="_blank">{{ file }}</a>
+                <form method="post">
+                    <input type="hidden" name="file" value="{{ file }}">
+                    <button class="button--danger">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Save">
+    </form>
+{% endblock %}
