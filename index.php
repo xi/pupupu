@@ -18,6 +18,13 @@ function rrmdir($path)
     rmdir($path);
 }
 
+function mkdirp($path)
+{
+    if (!file_exists($path)) {
+        mkdir($path, 0777, true);
+    }
+}
+
 function validatePath($path)
 {
     if (
@@ -49,9 +56,7 @@ function getData($path, $raise=false)
 
 function setData($path, $data)
 {
-    if (!file_exists("../_content$path")) {
-        mkdir("../_content$path", 0777, true);
-    }
+    mkdirp("../_content$path");
     file_put_contents("../_content$path/index.yml", $data['yml']);
     file_put_contents("../_content$path/index.md", $data['md']);
 }
@@ -101,9 +106,7 @@ function render($path, $verbose=false)
         'date' => time(),
     ));
 
-    if (!file_exists("..$path")) {
-        mkdir("..$path", 0777, true);
-    }
+    mkdirp("..$path");
     file_put_contents("..$path/index.html", $html);
 }
 
