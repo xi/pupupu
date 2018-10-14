@@ -2,6 +2,7 @@
 
 require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Yaml\Yaml;
+use Michelf\Markdown;
 
 function rrmdir($path)
 {
@@ -58,7 +59,6 @@ class Pupupu
         $this->srcDir = $srcDir;
         $this->targetDir = $targetDir;
 
-        $this->parsedown = new Parsedown();
         $loader = new Twig_Loader_Filesystem($srcDir . '/_templates');
         $this->twig = new Twig_Environment($loader);
 
@@ -102,7 +102,7 @@ class Pupupu
     {
         $key = "body:$path";
         if (!in_array($key, $this->cache)) {
-            $v = $this->parsedown->text($this->get($path, 'index.md'));
+            $v = Markdown::defaultTransform($this->get($path, 'index.md'));
             $this->cache[$key] = $v;
         }
         return $this->cache[$key];
@@ -167,6 +167,7 @@ class Pupupu
             'site' => $this->getSite(),
             'body' => $this->getBody($path),
             'date' => time(),
+            'pupupu' => $this,
         ));
 
         $filename = $page['filename'] ?? 'index.html';
