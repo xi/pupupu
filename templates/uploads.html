@@ -2,11 +2,11 @@
 
 {% block main %}
     <ul>
-        {% for file in files %}
+        {% for name, url in files %}
             <li>
-                <a href="/uploads/{{ file }}" target="_blank">{{ file }}</a>
+                <a href="{{ url }}" target="_blank">{{ name }}</a>
                 <form method="post">
-                    <input type="hidden" name="file" value="{{ file }}">
+                    <input type="hidden" name="name" value="{{ name }}">
                     <button class="button--danger">Delete</button>
                 </form>
             </li>

@@ -120,10 +120,14 @@ class Pupupu
 
     public function getSubpages($path)
     {
+        $subpages = array();
         $p = $this->srcDir . '/_content' . $path;
-        return array_filter(scandir($p), function ($file) use ($p) {
-            return $file !== '.' && $file !== '..' && is_dir("$p/$file");
-        });
+        foreach (scandir($p) as $name) {
+            if ($name !== '.' && $name !== '..' && is_dir("$p/$name")) {
+                $subpages[$name] = "$path/$name";
+            }
+        }
+        return $subpages;
     }
 
     public function upload($file)
@@ -135,10 +139,14 @@ class Pupupu
 
     public function getUploads()
     {
+        $uploads = array();
         $p = $this->targetDir . '/uploads';
-        return array_filter(scandir($p), function ($file) use ($p) {
-            return is_file("$p/$file");
-        });
+        foreach (scandir($p) as $name) {
+            if (is_file("$p/$name")) {
+                $uploads[$name] = "/uploads/$name";
+            }
+        }
+        return $uploads;
     }
 
     public function rmUpload($name)
@@ -170,8 +178,8 @@ class Pupupu
     public function renderAll($verbose=false, $path='')
     {
         $this->render($path, $verbose);
-        foreach ($this->getSubpages($path) as $page) {
-            $this->renderAll($verbose, "$path/$page");
+        foreach ($this->getSubpages($path) as $name => $p) {
+            $this->renderAll($verbose, $p);
         }
     }
 }
@@ -186,7 +194,7 @@ function uploadView($pupupu, $twig)
         $pupupu->upload($_FILES['file']);
         header("Location: ", true, 302);
     } else {
-        $pupupu->rmUpload($_POST['file']);
+        $pupupu->rmUpload($_POST['name']);
         header("Location: ", true, 302);
     }
 }
