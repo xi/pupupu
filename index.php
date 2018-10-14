@@ -59,7 +59,7 @@ class Pupupu
         $this->targetDir = $targetDir;
 
         $this->parsedown = new Parsedown();
-        $loader = new Twig_Loader_Filesystem($targetDir . '/_templates');
+        $loader = new Twig_Loader_Filesystem($srcDir . '/_templates');
         $this->twig = new Twig_Environment($loader);
 
     }
