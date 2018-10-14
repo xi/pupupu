@@ -160,38 +160,38 @@ class Pupupu
     }
 }
 
-$pupupu = new Pupupu('..', '..');
+function uploadView($pupupu, $twig)
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        echo $twig->render('uploads.html', array(
+            'files' => $pupupu->getUploads(),
+        ));
+    } elseif (isset($_FILES['file'])) {
+        $pupupu->upload($_FILES['file']);
+        header("Location: ", true, 302);
+    } else {
+        $pupupu->rmUpload($_POST['file']);
+        header("Location: ", true, 302);
+    }
+}
 
-if (isset($_SERVER['REQUEST_METHOD'])) {
-    $loader = new Twig_Loader_Filesystem('templates');
-    $twig = new Twig_Environment($loader);
+function siteView($pupupu, $twig)
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        echo $twig->render('site.html', array(
+            'yml' => $pupupu->get('', 'site.yml'),
+        ));
+    } else {
+        $pupupu->put('', 'site.yml', $_POST['yml']);
+        $pupupu->renderAll();
+        header("Location: ", true, 302);
+    }
+}
 
-    if (empty($_GET['path']) && $_GET['path'] !== '') {
-        header('Location: ?path=', true, 302);
-    } elseif (isset($_GET['add'])) {
+function pageView($pupupu, $twig)
+{
+    if (isset($_GET['add'])) {
         header("Location: ?path=${_GET['path']}/${_GET['add']}", true, 302);
-    } elseif ($_GET['path'] === '_site') {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            echo $twig->render('site.html', array(
-                'yml' => $pupupu->get('', 'site.yml'),
-            ));
-        } else {
-            $pupupu->put('', 'site.yml', $_POST['yml']);
-            $pupupu->renderAll();
-            header("Location: ", true, 302);
-        }
-    } elseif ($_GET['path'] === '_uploads') {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            echo $twig->render('uploads.html', array(
-                'files' => $pupupu->getUploads(),
-            ));
-        } elseif (isset($_FILES['file'])) {
-            $pupupu->upload($_FILES['file']);
-            header("Location: ", true, 302);
-        } else {
-            $pupupu->rmUpload($_POST['file']);
-            header("Location: ", true, 302);
-        }
     } else {
         $path = validatePath($_GET['path']);
 
@@ -217,6 +217,23 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
             $pupupu->render($path);
             header('Location: ', true, 302);
         }
+    }
+}
+
+$pupupu = new Pupupu('..', '..');
+
+if (isset($_SERVER['REQUEST_METHOD'])) {
+    $loader = new Twig_Loader_Filesystem('templates');
+    $twig = new Twig_Environment($loader);
+
+    if (empty($_GET['path']) && $_GET['path'] !== '') {
+        header('Location: ?path=', true, 302);
+    } elseif ($_GET['path'] === '_site') {
+        siteView($pupupu, $twig);
+    } elseif ($_GET['path'] === '_uploads') {
+        uploadView($pupupu, $twig);
+    } else {
+        pageView($pupupu, $twig);
     }
 } else {
     $pupupu->renderAll(true);
