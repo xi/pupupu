@@ -78,6 +78,9 @@ class Pupupu
 
         $loader = new Twig_Loader_Filesystem($srcDir . '/_templates');
         $this->twig = new Twig_Environment($loader);
+        $this->twig->addFilter(new Twig_Filter('md', function ($string) {
+            return MarkdownExtra::defaultTransform($string);
+        }));
 
         $this->cache = array();
     }
