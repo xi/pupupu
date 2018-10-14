@@ -2,18 +2,20 @@
 
 {% block breadcrumbs %}
     {% for name, path in breadcrumbs %}
-        <a href="?path={{ path }}">{{ name }}</a> /
+        / <a href="?path={{ path }}">{{ name }}</a>
     {% endfor %}
 
-    <form>
-        <input type="hidden" name="path" value="{{ path }}">
-        <input type="text" name="add" list="subpages" autocomplete="off">
-        <datalist id="subpages">
-            {% for name, path in subpages %}
-                <option value="{{ name }}">
-            {% endfor %}
-        </datalist>
-    </form>
+    {% if not pathIsFile %}
+        / <form>
+            <input type="hidden" name="path" value="{{ path }}">
+            <input type="text" name="add" list="subpages" autocomplete="off">
+            <datalist id="subpages">
+                {% for name, path in subpages %}
+                    <option value="{{ name }}">
+                {% endfor %}
+            </datalist>
+        </form>
+    {% endif %}
 {% endblock %}
 
 {% block main %}

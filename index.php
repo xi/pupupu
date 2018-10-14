@@ -2,21 +2,25 @@
 
 require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Yaml\Yaml;
-use Michelf\Markdown;
+use Michelf\MarkdownExtra;
 
-function rrmdir($path)
+function rmdirs($path)
 {
-    foreach (scandir($path) as $object) {
-        if ($object !== '.' && $object !== '..') {
-            $p = "$path/$object";
-            if (is_dir($p)) {
-                rrmdir($p);
-            } else {
-                unlink($p);
-            }
+    if ($path !== '.' && file_exists($path)) {
+        try {
+            rmdir($path);
+            rmdirs(dirname($path));
+        } finally {
         }
     }
-    rmdir($path);
+}
+
+function rmfile($path)
+{
+    if (file_exists($path)) {
+        unlink($path);
+    }
+    rmdirs(dirname($path));
 }
 
 function mkdirp($path)
@@ -34,12 +38,17 @@ function shiftHeadings($html, $offset)
     }, $html);
 }
 
+function pathIsFile($path)
+{
+    return $path === '/_site' || strpos($path, '.') !== false;
+}
+
 function validatePath($path)
 {
     if (
         (strlen($path) > 1 && $path[0] !== '/') ||
         substr($path, -1) === '/' ||
-        strpos($path, '.') !== false
+        strpos($path, '..') !== false
     ) {
         http_response_code(400);
         die();
@@ -73,9 +82,27 @@ class Pupupu
         $this->cache = array();
     }
 
-    public function get($path, $name)
+    protected function getSrc($path, $ext)
     {
-        $p = $this->srcDir . '/_content' . $path . '/' . $name;
+        if (pathIsFile($path)) {
+            return $this->srcDir . '/_content' . $path . '.' . $ext;
+        } else {
+            return $this->srcDir . '/_content' . $path . '/index' . '.' . $ext;
+        }
+    }
+
+    protected function getTarget($path)
+    {
+        if (pathIsFile($path)) {
+            return $this->targetDir . $path;
+        } else {
+            return $this->targetDir . $path . '/index.html';
+        }
+    }
+
+    public function get($path, $ext)
+    {
+        $p = $this->getSrc($path, $ext);
         if (file_exists($p)) {
             return file_get_contents($p);
         } else {
@@ -83,56 +110,52 @@ class Pupupu
         }
     }
 
-    public function put($path, $name, $content)
+    public function put($path, $ext, $content)
     {
-        $p = $this->srcDir . '/_content' . $path . '/' . $name;
+        $p = $this->getSrc($path, $ext);
         mkdirp(dirname($p));
         file_put_contents($p, $content);
     }
 
     public function rm($path)
     {
-        rrmdir($this->srcDir . '/_content' . $path);
-        rrmdir($this->targetDir . $path);
+        rmfile($this->getSrc($path, 'yml'));
+        rmfile($this->getSrc($path, 'md'));
+        rmfile($this->getTarget($path));
     }
 
-    protected function getYml($path, $name)
+    public function getMarkdown($path)
     {
-        $key = "yml:$path:$name";
+        $key = "md:$path";
         if (!in_array($key, $this->cache)) {
-            $v = Yaml::parse($this->get($path, $name));
+            $v = MarkdownExtra::defaultTransform($this->get($path, 'md'));
             $this->cache[$key] = $v;
         }
         return $this->cache[$key];
     }
 
-    public function getBody($path)
+    public function getYaml($path)
     {
-        $key = "body:$path";
+        $key = "yml:$path";
         if (!in_array($key, $this->cache)) {
-            $v = Markdown::defaultTransform($this->get($path, 'index.md'));
+            $v = Yaml::parse($this->get($path, 'yml'));
             $this->cache[$key] = $v;
         }
         return $this->cache[$key];
-    }
-
-    public function getPage($path)
-    {
-        return $this->getYml($path, 'index.yml');
-    }
-
-    public function getSite()
-    {
-        return $this->getYml('', 'site.yml');
     }
 
     public function getSubpages($path)
     {
         $subpages = array();
-        $p = $this->srcDir . '/_content' . $path;
+        $p = dirname($this->getSrc($path, 'yml'));
         foreach (scandir($p) as $name) {
-            if ($name !== '.' && $name !== '..' && is_dir("$p/$name")) {
-                $subpages[$name] = "$path/$name";
+            if ($name !== '.' && $name !== '..' && $name[0] !== '_') {
+                if (substr($name, -4) === '.yml') {
+                    $name = substr($name, 0, -4);
+                }
+                if (file_exists($this->getSrc("$path/$name", 'yml'))) {
+                    $subpages[$name] = "$path/$name";
+                }
             }
         }
         return $subpages;
@@ -140,9 +163,9 @@ class Pupupu
 
     public function upload($file)
     {
-        $p = $this->targetDir . '/uploads';
-        mkdirp($p);
-        move_uploaded_file($file['tmp_name'], $p . '/' . $file['name']);
+        $p = $this->targetDir . '/uploads/' . $file['name'];
+        mkdirp(dirname($p));
+        move_uploaded_file($file['tmp_name'], $p);
     }
 
     public function getUploads()
@@ -168,24 +191,22 @@ class Pupupu
             echo "rendering $path\n";
         }
 
-        $page = $this->getPage($path);
-        $site = $this->getSite();
-        $body = $this->getBody($path);
-        $body = shiftHeadings($body, $site['shiftHeadings'] ?? 0);
+        $page = $this->getYaml($path);
+        $site = $this->getYaml('/_site');
+        $body = $this->getMarkdown($path);
+        $body = shiftHeadings($body, $site['_shiftHeadings'] ?? 0);
 
-        $template = $page['template'] ?? 'base.html';
+        $template = $page['_template'] ?? 'base.html';
         $html = $this->twig->render($template, array(
             'page' => $page,
             'site' => $site,
             'body' => $body,
-            'date' => time(),
             'pupupu' => $this,
         ));
 
-        $filename = $page['filename'] ?? 'index.html';
-        $p = $this->targetDir . $path . '/' . $filename;
-        mkdirp(dirname($p));
-        file_put_contents($p, $html);
+        $target = $this->getTarget($path);
+        mkdirp(dirname($target));
+        file_put_contents($target, $html);
     }
 
     public function renderAll($verbose=false, $path='')
@@ -198,8 +219,8 @@ class Pupupu
 
     public function renderDynamic($verbose=false)
     {
-        $site = $this->getSite();
-        $dynamic = $site['dynamic'] ?? array();
+        $site = $this->getYaml('/_site');
+        $dynamic = $site['_dynamic'] ?? array();
         foreach ($dynamic as $path) {
             $this->render($path, $verbose);
         }
@@ -225,10 +246,10 @@ function siteView($pupupu, $twig)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         echo $twig->render('site.html', array(
-            'yml' => $pupupu->get('', 'site.yml'),
+            'yml' => $pupupu->get('/_site', 'yml'),
         ));
     } else {
-        $pupupu->put('', 'site.yml', $_POST['yml']);
+        $pupupu->put('/_site', 'yml', $_POST['yml']);
         $pupupu->renderAll();
         header("Location: ", true, 302);
     }
@@ -238,18 +259,21 @@ function pageView($pupupu, $twig)
 {
     if (isset($_GET['add'])) {
         header("Location: ?path=${_GET['path']}/${_GET['add']}", true, 302);
+    } elseif ($_GET['path'] === '/_site') {
+        header('Location: ?path=_site', true, 302);
     } else {
         $path = validatePath($_GET['path']);
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo $twig->render('page.html', array(
-                'yml' => $pupupu->get($path, 'index.yml'),
-                'md' => $pupupu->get($path, 'index.md'),
+                'yml' => $pupupu->get($path, 'yml'),
+                'md' => $pupupu->get($path, 'md'),
                 'subpages' => $pupupu->getSubpages($path),
                 'path' => $path,
+                'pathIsFile' => pathIsFile($path),
                 'breadcrumbs' => getBreadcrumbs($path),
             ));
-        } elseif ($_POST['delete']) {
+        } elseif (isset($_POST['delete'])) {
             if ($path === '') {
                 http_response_code(400);
                 die();
@@ -258,8 +282,8 @@ function pageView($pupupu, $twig)
             $target = dirname($path);
             header("Location: ?path=$target", true, 302);
         } else {
-            $pupupu->put($path, 'index.yml', $_POST['yml']);
-            $pupupu->put($path, 'index.md', $_POST['md']);
+            $pupupu->put($path, 'yml', $_POST['yml']);
+            $pupupu->put($path, 'md', $_POST['md']);
             $pupupu->render($path);
             $pupupu->renderDynamic();
             header('Location: ', true, 302);
