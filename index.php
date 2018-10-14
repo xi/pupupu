@@ -195,6 +195,15 @@ class Pupupu
             $this->renderAll($verbose, $p);
         }
     }
+
+    public function renderDynamic($verbose=false)
+    {
+        $site = $this->getSite();
+        $dynamic = $site['dynamic'] ?? array();
+        foreach ($dynamic as $path) {
+            $this->render($path, $verbose);
+        }
+    }
 }
 
 function uploadView($pupupu, $twig)
@@ -252,6 +261,7 @@ function pageView($pupupu, $twig)
             $pupupu->put($path, 'index.yml', $_POST['yml']);
             $pupupu->put($path, 'index.md', $_POST['md']);
             $pupupu->render($path);
+            $pupupu->renderDynamic();
             header('Location: ', true, 302);
         }
     }
