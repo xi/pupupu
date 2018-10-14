@@ -163,7 +163,7 @@ class Pupupu
 
     public function upload($file)
     {
-        $p = $this->targetDir . '/uploads/' . $file['name'];
+        $p = $this->targetDir . '/files/' . $file['name'];
         mkdirp(dirname($p));
         move_uploaded_file($file['tmp_name'], $p);
     }
@@ -171,10 +171,10 @@ class Pupupu
     public function getUploads()
     {
         $uploads = array();
-        $p = $this->targetDir . '/uploads';
+        $p = $this->targetDir . '/files';
         foreach (scandir($p) as $name) {
             if (is_file("$p/$name")) {
-                $uploads[$name] = "/uploads/$name";
+                $uploads[$name] = "/files/$name";
             }
         }
         return $uploads;
@@ -182,7 +182,7 @@ class Pupupu
 
     public function rmUpload($name)
     {
-        unlink($this->targetDir . '/uploads/' . $name);
+        unlink($this->targetDir . '/files/' . $name);
     }
 
     public function render($path, $verbose=false)
