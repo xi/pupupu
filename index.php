@@ -62,6 +62,7 @@ class Pupupu
         $loader = new Twig_Loader_Filesystem($srcDir . '/_templates');
         $this->twig = new Twig_Environment($loader);
 
+        $this->cache = array();
     }
 
     public function get($path, $name)
@@ -87,19 +88,34 @@ class Pupupu
         rrmdir($this->targetDir . $path);
     }
 
+    protected function getYml($path, $name)
+    {
+        $key = "yml:$path:$name";
+        if (!in_array($key, $this->cache)) {
+            $v = Yaml::parse($this->get($path, 'index.yml'));
+            $this->cache[$key] = $v;
+        }
+        return $this->cache[$key];
+    }
+
     public function getBody($path)
     {
-        return $this->parsedown->text($this->get($path, 'index.md'));
+        $key = "body:$path";
+        if (!in_array($key, $this->cache)) {
+            $v = $this->parsedown->text($this->get($path, 'index.md'));
+            $this->cache[$key] = $v;
+        }
+        return $this->cache[$key];
     }
 
     public function getPage($path)
     {
-        return Yaml::parse($this->get($path, 'index.yml'));
+        return $this->getYml($path, 'index.yml');
     }
 
     public function getSite()
     {
-        return Yaml::parse($this->get('', 'site.yml'));
+        return $this->getYml('', 'site.yml');
     }
 
     public function getSubpages($path)
