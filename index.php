@@ -26,6 +26,14 @@ function mkdirp($path)
     }
 }
 
+function shiftHeadings($html, $offset)
+{
+    return preg_replace_callback('|(</?h)([1-6])([ >])|', function ($match) use ($offset) {
+        $target = max(1, min(6, (intval($match[2]) + $offset)));
+        return $match[1] . $target . $match[3];
+    }, $html);
+}
+
 function validatePath($path)
 {
     if (
@@ -161,11 +169,15 @@ class Pupupu
         }
 
         $page = $this->getPage($path);
+        $site = $this->getSite();
+        $body = $this->getBody($path);
+        $body = shiftHeadings($body, $site['shiftHeadings'] ?? 0);
+
         $template = $page['template'] ?? 'base.html';
         $html = $this->twig->render($template, array(
             'page' => $page,
-            'site' => $this->getSite(),
-            'body' => $this->getBody($path),
+            'site' => $site,
+            'body' => $body,
             'date' => time(),
             'pupupu' => $this,
         ));
