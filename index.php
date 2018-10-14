@@ -92,7 +92,7 @@ class Pupupu
     {
         $key = "yml:$path:$name";
         if (!in_array($key, $this->cache)) {
-            $v = Yaml::parse($this->get($path, 'index.yml'));
+            $v = Yaml::parse($this->get($path, $name));
             $this->cache[$key] = $v;
         }
         return $this->cache[$key];
