@@ -3,13 +3,13 @@
 {% block main %}
     <form method="POST">
         <label>
-            Metadata
+            {{ 'Metadata'|trans }}
             <textarea name="yml">{{ yml }}</textarea>
         </label>
 
         <div class="button-row">
             <div>
-                <input type="submit" value="Save">
+                <input type="submit" value="{{ 'Save'|trans }}">
             </div>
         </div>
     </form>

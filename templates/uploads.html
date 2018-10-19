@@ -6,17 +6,17 @@
             <li>
                 {% if file.is_file %}
                     {% if file.is_image %}
-                        <img src="{{ file.url }}" class="file-list__icon" alt="image">
+                        <img src="{{ file.url }}" class="file-list__icon" alt="{{ 'image'|trans }}">
                     {% else %}
-                        <img src="static/file.png" class="file-list__icon" alt="file">
+                        <img src="static/file.png" class="file-list__icon" alt="{{ 'file'|trans }}">
                     {% endif %}
                     <a href="{{ file.url }}" target="_blank" class="file-list__main">{{ file.name }}</a>
                     <form method="post">
                         <input type="hidden" name="name" value="{{ file.name }}">
-                        <button class="button--danger button--small" name="delete">Delete</button>
+                        <button class="button--danger button--small" name="delete">{{ 'Delete'|trans }}</button>
                     </form>
                 {% else %}
-                    <img src="static/folder.png" class="file-list__icon" alt="folder">
+                    <img src="static/folder.png" class="file-list__icon" alt="{{ 'folder'|trans }}">
                     <a href="?path=_uploads{{ file.path }}" class="file-list__main">{{ file.name }}/</a>
                 {% endif %}
             </li>
@@ -24,7 +24,7 @@
         <li>
             <form method="post" enctype="multipart/form-data" class="flex-ignore">
                 <input type="file" name="file" class="input--invisible file-list__main">
-                <input type="submit" value="Upload" class="button--small">
+                <input type="submit" value="{{ 'Upload'|trans }}" class="button--small">
             </form>
         </li>
     </ul>

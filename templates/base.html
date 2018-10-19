@@ -12,12 +12,12 @@
     <header>
         <nav aria-label="Breadcrumbs">
             {% block breadcrumbs %}
-                <a href="?path=">home</a> /
+                <a href="?path=">{{ 'home'|trans }}</a> /
             {% endblock %}
         </nav>
         <nav>
-            <a href="?path=_site">site config</a>
-            <a href="?path=_uploads">uploads</a>
+            <a href="?path=_site">{{ 'site config'|trans }}</a>
+            <a href="?path=_uploads">{{ 'uploads'|trans }}</a>
         </nav>
     </header>
 

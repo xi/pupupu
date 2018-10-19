@@ -1,4 +1,8 @@
 (function() {
+    var trans = function(s) {
+        return s;
+    };
+
     var on = function(element, eventType, selector, fn) {
         element.addEventListener(eventType, function(event) {
             var target = event.target.closest(selector);
@@ -29,7 +33,7 @@
     });
 
     on(document, 'click', '[name="delete"]', function(event) {
-        if (!window.confirm('Are you sure you want to delete this?')) {
+        if (!window.confirm(trans('Are you sure you want to delete this?'))) {
             event.preventDefault();
         }
     });

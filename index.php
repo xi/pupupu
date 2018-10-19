@@ -4,6 +4,11 @@ require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Yaml\Yaml;
 use Michelf\MarkdownExtra;
 
+function trans($s)
+{
+    return $s;
+}
+
 function rmdirs($path)
 {
     if ($path !== '.' && file_exists($path)) {
@@ -65,7 +70,7 @@ function validatePath($path)
 
 function getBreadcrumbs($path)
 {
-    $breadcrumbs = array('home' => '');
+    $breadcrumbs = array(trans('home') => '');
     $parts = explode('/', $path);
     for ($i = 1; $i < count($parts); $i++) {
         $name = $parts[$i];
@@ -201,7 +206,7 @@ class Pupupu
     public function render($path, $verbose=false)
     {
         if ($verbose) {
-            echo "rendering $path\n";
+            echo trans('rendering') . " $path\n";
         }
 
         $page = $this->getYaml($path);
@@ -327,6 +332,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
 
     $loader = new Twig_Loader_Filesystem('templates');
     $twig = new Twig_Environment($loader);
+    $twig->addFilter(new Twig_Filter('trans', 'trans'));
 
     if (empty($_GET['path']) && $_GET['path'] !== '') {
         header('Location: ?path=', true, 302);

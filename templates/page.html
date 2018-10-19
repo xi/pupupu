@@ -9,22 +9,22 @@
 {% block main %}
     <form method="POST">
         <label>
-            Body
+            {{ 'Body'|trans }}
             <textarea name="md">{{ md }}</textarea>
         </label>
 
         <label>
-            Metadata
+            {{ 'Metadata'|trans }}
             <textarea name="yml">{{ yml }}</textarea>
         </label>
 
         <div class="button-row">
             <div>
-                <input type="submit" value="Save">
-                <input type="submit" class="button--danger" name="delete" value="Delete">
+                <input type="submit" value="{{ 'Save'|trans }}">
+                <input type="submit" class="button--danger" name="delete" value="{{ 'Delete'|trans }}">
             </div>
             <div>
-                <a href="{{ url }}" target="_blank" class="button">View</a>
+                <a href="{{ url }}" target="_blank" class="button">{{ 'View'|trans }}</a>
             </div>
         </div>
     </form>
@@ -37,7 +37,7 @@
             <li>
                 <form class="flex-ignore">
                     <input type="hidden" name="path" value="{{ path }}">
-                    <input type="text" name="add" placeholder="add page" class="input--invisible file-list__main">
+                    <input type="text" name="add" placeholder="{{ 'add page'|trans }}" class="input--invisible file-list__main">
                 </form>
             </li>
         </ul>
