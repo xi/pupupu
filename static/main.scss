@@ -31,3 +31,9 @@ header {
 header form {
 	display: inline;
 }
+
+.button-row {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: $spacer;
+}

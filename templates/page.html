@@ -30,8 +30,14 @@
             <textarea name="yml">{{ yml }}</textarea>
         </label>
 
-        <input type="submit" value="Save">
-        <input type="submit" class="button--danger" name="delete" value="Delete">
-        <a href="{{ url }}" target="_blank" class="button">View</a>
+        <div class="button-row">
+            <div>
+                <input type="submit" value="Save">
+                <input type="submit" class="button--danger" name="delete" value="Delete">
+            </div>
+            <div>
+                <a href="{{ url }}" target="_blank" class="button">View</a>
+            </div>
+        </div>
     </form>
 {% endblock %}
