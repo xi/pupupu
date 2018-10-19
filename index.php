@@ -218,7 +218,7 @@ class Pupupu
         $site = $this->getYaml('/_site');
         $body = $this->getMarkdown($path);
 
-        $template = $page['_template'] ?? 'base.html';
+        $template = $page['_template'] ?? 'default.html';
         $html = $this->twig->render($template, array(
             'page' => $page,
             'site' => $site,
