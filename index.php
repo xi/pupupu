@@ -135,16 +135,6 @@ class Pupupu
         rmfile($this->getTarget($path));
     }
 
-    public function getMarkdown($path)
-    {
-        $key = "md:$path";
-        if (!in_array($key, $this->cache)) {
-            $v = MarkdownExtra::defaultTransform($this->get($path, 'md'));
-            $this->cache[$key] = $v;
-        }
-        return $this->cache[$key];
-    }
-
     public function getYaml($path)
     {
         $key = "yml:$path";
@@ -216,7 +206,7 @@ class Pupupu
 
         $page = $this->getYaml($path);
         $site = $this->getYaml('/_site');
-        $body = $this->getMarkdown($path);
+        $body = $this->get($path, 'md');
 
         $template = $page['_template'] ?? 'default.html';
         $html = $this->twig->render($template, array(
