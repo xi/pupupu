@@ -88,6 +88,7 @@ class Pupupu
         $this->twig->addFilter(new Twig_Filter('md', function ($string) {
             return MarkdownExtra::defaultTransform($string);
         }));
+        $this->twig->addFilter(new Twig_Filter('shift_headings', 'shiftHeadings'));
 
         $this->cache = array();
     }
@@ -216,7 +217,6 @@ class Pupupu
         $page = $this->getYaml($path);
         $site = $this->getYaml('/_site');
         $body = $this->getMarkdown($path);
-        $body = shiftHeadings($body, $site['_shiftHeadings'] ?? 0);
 
         $template = $page['_template'] ?? 'base.html';
         $html = $this->twig->render($template, array(
