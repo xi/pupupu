@@ -176,18 +176,18 @@ class Pupupu
         return $this->targetUrl . $path . '/';
     }
 
-    public function upload($file)
+    public function upload($path, $file)
     {
-        $p = $this->targetDir . '/files/' . $file['name'];
+        $p = $this->targetDir . '/files' . $path . '/' . $file['name'];
         mkdirp(dirname($p));
         move_uploaded_file($file['tmp_name'], $p);
     }
 
-    public function getUploads()
+    public function getUploads($path)
     {
         $uploads = array();
-        $p = $this->targetDir . '/files';
-        $u = $this->targetUrl . '/files';
+        $p = $this->targetDir . '/files' . $path;
+        $u = $this->targetUrl . '/files' . $path;
         foreach (scandir($p) as $name) {
             if (is_file("$p/$name")) {
                 $uploads[$name] = "$u/$name";
@@ -196,9 +196,9 @@ class Pupupu
         return $uploads;
     }
 
-    public function rmUpload($name)
+    public function rmUpload($path)
     {
-        unlink($this->targetDir . '/files/' . $name);
+        unlink($this->targetDir . '/files' . $path);
     }
 
     public function render($path, $verbose=false)
@@ -259,15 +259,17 @@ function ensureTrailingSlash()
 
 function uploadView($pupupu, $twig)
 {
+    $path = validatePath(substr($_GET['path'], 8));
+
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         echo $twig->render('uploads.html', array(
-            'files' => $pupupu->getUploads(),
+            'files' => $pupupu->getUploads($path),
         ));
     } elseif (isset($_FILES['file'])) {
-        $pupupu->upload($_FILES['file']);
+        $pupupu->upload($path, $_FILES['file']);
         header("Location: ", true, 302);
     } else {
-        $pupupu->rmUpload($_POST['name']);
+        $pupupu->rmUpload($path . '/' . $_POST['name']);
         header("Location: ", true, 302);
     }
 }
@@ -334,7 +336,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
         header('Location: ?path=', true, 302);
     } elseif ($_GET['path'] === '_site') {
         siteView($pupupu, $twig);
-    } elseif ($_GET['path'] === '_uploads') {
+    } elseif (substr($_GET['path'], 0, 8) === '_uploads') {
         uploadView($pupupu, $twig);
     } else {
         pageView($pupupu, $twig);
