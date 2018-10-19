@@ -236,6 +236,20 @@ class Pupupu
     }
 }
 
+function ensureTrailingSlash()
+{
+    $parts = explode('?', $_SERVER['REQUEST_URI']);
+    if (substr($parts[0], -9) === 'index.php') {
+        $parts[0] = substr($parts[0], 0, -9);
+        header('Location: ' . implode('?', $parts), true, 301);
+        die();
+    } elseif (substr($parts[0], -1) !== '/') {
+        $parts[0] = $parts[0] . '/';
+        header('Location: ' . implode('?', $parts), true, 301);
+        die();
+    }
+}
+
 function uploadView($pupupu, $twig)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -303,6 +317,8 @@ function pageView($pupupu, $twig)
 $pupupu = new Pupupu('..', '..');
 
 if (isset($_SERVER['REQUEST_METHOD'])) {
+    ensureTrailingSlash();
+
     $loader = new Twig_Loader_Filesystem('templates');
     $twig = new Twig_Environment($loader);
 
