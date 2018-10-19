@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
 
 {% block main %}
-    <ul>
+    <ul class="file-list">
         {% for name, url in files %}
             <li>
-                <a href="{{ url }}" target="_blank">{{ name }}</a>
+                <a href="{{ url }}" target="_blank" class="file-list__main">{{ name }}</a>
                 <form method="post">
                     <input type="hidden" name="name" value="{{ name }}">
-                    <button class="button--danger" name="delete">Delete</button>
+                    <button class="button--danger button--small" name="delete">Delete</button>
                 </form>
             </li>
         {% endfor %}
+        <li>
+            <form method="post" enctype="multipart/form-data" class="flex-ignore">
+                <input type="file" name="file" class="input--invisible file-list__main">
+                <input type="submit" value="Upload" class="button--small">
+            </form>
+        </li>
     </ul>
-
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <input type="submit" value="Save">
-    </form>
 {% endblock %}
