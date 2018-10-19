@@ -318,7 +318,7 @@ function pageView($pupupu, $twig)
                 die();
             }
             $pupupu->rm($path);
-            $target = dirname($path);
+            $target = implode('/', array_slice(explode('/', $path), 0, -1));
             header("Location: ?path=$target", true, 302);
         } else {
             $pupupu->put($path, 'yml', $_POST['yml']);
