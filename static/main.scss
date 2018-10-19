@@ -70,4 +70,9 @@ header form {
 	.file-list__main {
 		flex: 1 1 auto;
 	}
+
+	.file-list__icon {
+		width: 1em;
+		margin-right: $padding;
+	}
 }

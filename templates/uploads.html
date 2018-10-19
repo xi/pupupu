@@ -2,13 +2,23 @@
 
 {% block main %}
     <ul class="file-list">
-        {% for name, url in files %}
+        {% for file in files %}
             <li>
-                <a href="{{ url }}" target="_blank" class="file-list__main">{{ name }}</a>
-                <form method="post">
-                    <input type="hidden" name="name" value="{{ name }}">
-                    <button class="button--danger button--small" name="delete">Delete</button>
-                </form>
+                {% if file.is_file %}
+                    {% if file.is_image %}
+                        <img src="{{ file.url }}" class="file-list__icon" alt="image">
+                    {% else %}
+                        <img src="static/file.png" class="file-list__icon" alt="file">
+                    {% endif %}
+                    <a href="{{ file.url }}" target="_blank" class="file-list__main">{{ file.name }}</a>
+                    <form method="post">
+                        <input type="hidden" name="name" value="{{ file.name }}">
+                        <button class="button--danger button--small" name="delete">Delete</button>
+                    </form>
+                {% else %}
+                    <img src="static/folder.png" class="file-list__icon" alt="folder">
+                    <a href="?path=_uploads{{ file.path }}" class="file-list__main">{{ file.name }}/</a>
+                {% endif %}
             </li>
         {% endfor %}
         <li>

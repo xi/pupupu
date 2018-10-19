@@ -189,8 +189,14 @@ class Pupupu
         $p = $this->targetDir . '/files' . $path;
         $u = $this->targetUrl . '/files' . $path;
         foreach (scandir($p) as $name) {
-            if (is_file("$p/$name")) {
-                $uploads[$name] = "$u/$name";
+            if ($name !== '.' && $name !== '..') {
+                $uploads[] = array(
+                    'name' => $name,
+                    'path' => "$path/$name",
+                    'url' => "$u/$name",
+                    'is_file' => is_file("$p/$name"),
+                    'is_image' => getimagesize("$p/$name"),
+                );
             }
         }
         return $uploads;
