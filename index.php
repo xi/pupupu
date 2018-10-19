@@ -77,10 +77,11 @@ function getBreadcrumbs($path)
 
 class Pupupu
 {
-    public function __construct($srcDir, $targetDir)
+    public function __construct($srcDir, $targetDir, $targetUrl)
     {
         $this->srcDir = $srcDir;
         $this->targetDir = $targetDir;
+        $this->targetUrl = $targetUrl;
 
         $loader = new Twig_Loader_Filesystem($srcDir . '/_templates');
         $this->twig = new Twig_Environment($loader);
@@ -170,6 +171,11 @@ class Pupupu
         return $subpages;
     }
 
+    public function getUrl($path)
+    {
+        return $this->targetUrl . $path . '/';
+    }
+
     public function upload($file)
     {
         $p = $this->targetDir . '/files/' . $file['name'];
@@ -181,9 +187,10 @@ class Pupupu
     {
         $uploads = array();
         $p = $this->targetDir . '/files';
+        $u = $this->targetUrl . '/files';
         foreach (scandir($p) as $name) {
             if (is_file("$p/$name")) {
-                $uploads[$name] = "/files/$name";
+                $uploads[$name] = "$u/$name";
             }
         }
         return $uploads;
@@ -293,6 +300,7 @@ function pageView($pupupu, $twig)
                 'md' => $pupupu->get($path, 'md'),
                 'subpages' => $pupupu->getSubpages($path),
                 'path' => $path,
+                'url' => $pupupu->getUrl($path),
                 'pathIsFile' => pathIsFile($path),
                 'breadcrumbs' => getBreadcrumbs($path),
             ));
@@ -314,7 +322,7 @@ function pageView($pupupu, $twig)
     }
 }
 
-$pupupu = new Pupupu('..', '..');
+$pupupu = new Pupupu('..', '..', '..');
 
 if (isset($_SERVER['REQUEST_METHOD'])) {
     ensureTrailingSlash();
