@@ -30,6 +30,12 @@ function mkdirp($path)
     }
 }
 
+function _file_put_contents($path, $content)
+{
+    $normalized = preg_replace("/\r\n/", "\n", $content);
+    file_put_contents($path, $normalized);
+}
+
 function shiftHeadings($html, $offset)
 {
     return preg_replace_callback('|(</?h)([1-6])([ >])|', function ($match) use ($offset) {
@@ -117,7 +123,7 @@ class Pupupu
     {
         $p = $this->getSrc($path, $ext);
         mkdirp(dirname($p));
-        file_put_contents($p, $content);
+        _file_put_contents($p, $content);
     }
 
     public function rm($path)
@@ -209,7 +215,7 @@ class Pupupu
 
         $target = $this->getTarget($path);
         mkdirp(dirname($target));
-        file_put_contents($target, $html);
+        _file_put_contents($target, $html);
     }
 
     public function renderAll($verbose=false, $path='')
