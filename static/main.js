@@ -27,4 +27,10 @@
     document.querySelectorAll('textarea').forEach(function(e) {
         resize.call(e);
     });
+
+    on(document, 'click', '[name="delete"]', function(event) {
+        if (!window.confirm('Are you sure you want to delete this?')) {
+            event.preventDefault();
+        }
+    });
 })()
