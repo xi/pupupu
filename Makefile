@@ -9,3 +9,6 @@ node_modules:
 
 %.css: %.scss node_modules
 	sassc $< > $@
+
+pupupu.zip:
+	cd .. && zip -r -FS pupupu/$@ pupupu/index.php pupupu/static/ pupupu/templates/ pupupu/vendor/ pupupu/node_modules/font-awesome/css/ pupupu/node_modules/font-awesome/fonts/ pupupu/node_modules/simplemde/dist/
