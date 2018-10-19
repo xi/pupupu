@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+        <meta name="viewport" content="width=device-width">
+        <title>{{ site.title }}{% if page.title %} - {{ page.title }}{% endif %}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="/static/style.css" />
+    </head>
+
+    <body>
+        <header>
+            <a href="/" rel="home"><img src="/files/logo.jpg" class="logo" alt="{{ site.title }}"></a>
+
+            <nav>
+                <a href="/" rel="home">Home</a>
+                {% for url, name in site.nav %}
+                    <a href="{{ url }}">{{ name }}</a>
+                {% endfor %}
+            </nav>
+        </header>
+
+        <main id="main">
+            {% if page.title %}<h1>{{ page.title }}</h1>{% endif %}
+            {{ body|md|shift_headings(1)|raw }}
+        </main>
+
+        <footer>
+            {% for url, name in site.footer %}
+                <a href="{{ url }}">{{ name }}</a>
+            {% endfor %}
+        </footer>
+    </body>
+</html>
