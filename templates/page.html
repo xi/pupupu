@@ -1,11 +1,5 @@
 {% extends 'base.html' %}
 
-{% block breadcrumbs %}
-    {% for name, path in breadcrumbs %}
-        / <a href="?path={{ path }}">{{ name }}</a>
-    {% endfor %}
-{% endblock %}
-
 {% block main %}
     <form method="POST">
         <label>
@@ -28,18 +22,4 @@
             </div>
         </div>
     </form>
-
-    {% if not pathIsFile %}
-        <ul class="file-list">
-            {% for name, path in subpages %}
-                <li><a href="?path={{ path }}" class="file-list__main">{{ name }}</a></li>
-            {% endfor %}
-            <li>
-                <form class="flex-ignore">
-                    <input type="hidden" name="path" value="{{ path }}">
-                    <input type="text" name="add" placeholder="{{ 'add page'|trans }}" class="input--invisible file-list__main">
-                </form>
-            </li>
-        </ul>
-    {% endif %}
 {% endblock %}

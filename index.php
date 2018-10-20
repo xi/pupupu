@@ -89,18 +89,6 @@ function validatePath($path)
     }
 }
 
-function getBreadcrumbs($path)
-{
-    $breadcrumbs = array(trans('home') => '');
-    $parts = explode('/', $path);
-    for ($i = 1; $i < count($parts); $i++) {
-        $name = $parts[$i];
-        $path = implode('/', array_slice($parts, 0, $i + 1));
-        $breadcrumbs[$name] = $path;
-    }
-    return $breadcrumbs;
-}
-
 class Pupupu
 {
     public function __construct($srcDir, $targetDir, $targetUrl)
@@ -339,11 +327,7 @@ function pageView($pupupu, $twig)
             echo $twig->render('page.html', array(
                 'yml' => $pupupu->get($path, 'yml'),
                 'md' => $pupupu->get($path, 'md'),
-                'subpages' => $pupupu->getSubpages($path),
-                'path' => $path,
                 'url' => $pupupu->getUrl($path),
-                'pathIsFile' => pathIsFile($path),
-                'breadcrumbs' => getBreadcrumbs($path),
             ));
         } elseif (isset($_POST['delete'])) {
             if ($path === '') {

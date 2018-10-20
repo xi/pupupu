@@ -10,14 +10,10 @@
 </head>
 <body>
     <header>
-        <nav aria-label="Breadcrumbs">
-            {% block breadcrumbs %}
-                <a href="?path=">{{ 'home'|trans }}</a> /
-            {% endblock %}
-        </nav>
         <nav>
-            <a href="?path=_site">{{ 'site config'|trans }}</a>
+            <a href="?">{{ 'pages'|trans }}</a>
             <a href="?path=_uploads">{{ 'uploads'|trans }}</a>
+            <a href="?path=_site">{{ 'config'|trans }}</a>
         </nav>
     </header>
 
