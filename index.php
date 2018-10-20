@@ -54,6 +54,11 @@ function pathIsFile($path)
     return $path === '/_site' || strpos($path, '.') !== false;
 }
 
+function pathDirname($path)
+{
+    return implode('/', array_slice(explode('/', $path), 0, -1));
+}
+
 function validatePath($path)
 {
     if (
@@ -185,7 +190,13 @@ class Pupupu
         $p = $this->targetDir . '/files' . $path;
         $u = $this->targetUrl . '/files' . $path;
         foreach (scandir($p) as $name) {
-            if ($name !== '.' && $name !== '..') {
+            if ($name === '..' && $path !== '') {
+                $uploads[] = array(
+                    'name' => $name,
+                    'path' => pathDirname($path),
+                    'is_file' => false,
+                );
+            } elseif ($name !== '.' && $name !== '..') {
                 $uploads[] = array(
                     'name' => $name,
                     'path' => "$path/$name",
@@ -313,7 +324,7 @@ function pageView($pupupu, $twig)
                 die();
             }
             $pupupu->rm($path);
-            $target = implode('/', array_slice(explode('/', $path), 0, -1));
+            $target = pathDirname($path);
             header("Location: ?path=$target", true, 302);
         } else {
             $pupupu->put($path, 'yml', $_POST['yml']);
