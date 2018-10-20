@@ -27,7 +27,13 @@
         <li>
             <form method="post" enctype="multipart/form-data" class="flex-ignore">
                 <input type="file" name="file" class="input--invisible file-list__main">
-                <input type="submit" value="{{ 'Upload'|trans }}" class="button--small">
+                <input type="submit" value="{{ 'Upload file'|trans }}" class="button--small">
+            </form>
+        </li>
+        <li>
+            <form method="post" class="flex-ignore">
+                <input type="text" name="folder" placeholder="{{ 'name'|trans }}" class="input--invisible file-list__main">
+                <input type="submit" value="{{ 'Create folder'|trans }}" class="button--small">
             </form>
         </li>
     </ul>

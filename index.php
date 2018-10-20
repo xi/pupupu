@@ -200,6 +200,12 @@ class Pupupu
         move_uploaded_file($file['tmp_name'], $p);
     }
 
+    public function uploadFolder($path, $name)
+    {
+        $p = $this->targetDir . '/files' . $path . '/' . $name;
+        mkdirp($p);
+    }
+
     public function getUploads($path)
     {
         $uploads = array();
@@ -296,9 +302,14 @@ function uploadView($pupupu, $twig)
     } elseif (isset($_FILES['file'])) {
         $pupupu->upload($path, $_FILES['file']);
         header("Location: ", true, 302);
-    } else {
+    } elseif (isset($_POST['folder'])) {
+        $pupupu->uploadFolder($path, $_POST['folder']);
+        header("Location: ", true, 302);
+    } elseif (isset($_POST['delete'])) {
         $pupupu->rmUpload($path . '/' . $_POST['name']);
         header("Location: ", true, 302);
+    } else {
+        http_response_code(400);
     }
 }
 
