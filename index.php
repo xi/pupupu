@@ -336,7 +336,8 @@ function siteView($pupupu, $twig)
 function pageView($pupupu, $twig)
 {
     if (isset($_GET['add'])) {
-        header("Location: ?path=${_GET['path']}/${_GET['add']}", true, 302);
+        $path = $_GET['path'] . '/' . $_GET['add'];
+        header('Location: ?path=' . urlencode($path), true, 302);
     } else {
         $path = validatePath($_GET['path']);
 

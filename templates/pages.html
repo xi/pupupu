@@ -3,7 +3,7 @@
 {% block main %}
     <ul class="file-list">
         {% for path in pages %}
-            <li><a href="?path={{ path }}" class="file-list__main">
+            <li><a href="?path={{ path|e('url') }}" class="file-list__main">
                 {{ path }}{% if '.' not in path %}/{% endif %}
             </a></li>
         {% endfor %}

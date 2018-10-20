@@ -13,7 +13,7 @@
                     <a href="{{ file.url }}" target="_blank" class="file-list__main">{{ file.name }}</a>
                 {% else %}
                     <img src="static/folder.png" class="file-list__icon" alt="{{ 'folder'|trans }}">
-                    <a href="?path=_files{{ file.path }}" class="file-list__main">{{ file.name }}/</a>
+                    <a href="?path=_files{{ file.path|e('url') }}" class="file-list__main">{{ file.name }}/</a>
                 {% endif %}
 
                 {% if file.name != '..' %}
