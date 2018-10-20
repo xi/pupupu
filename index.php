@@ -308,13 +308,13 @@ function filesView($pupupu, $twig)
         ));
     } elseif (isset($_FILES['file'])) {
         $pupupu->uploadFile($path, $_FILES['file']);
-        header("Location: ", true, 302);
+        header('Location: ', true, 302);
     } elseif (isset($_POST['folder'])) {
         $pupupu->createFileFolder($path, $_POST['folder']);
-        header("Location: ", true, 302);
+        header('Location: ', true, 302);
     } elseif (isset($_POST['delete'])) {
         $pupupu->rmFile($path . '/' . $_POST['name']);
-        header("Location: ", true, 302);
+        header('Location: ', true, 302);
     } else {
         http_response_code(400);
     }
@@ -329,7 +329,7 @@ function siteView($pupupu, $twig)
     } else {
         $pupupu->put('/_site', 'yml', $_POST['yml']);
         $pupupu->renderAll();
-        header("Location: ", true, 302);
+        header('Location: ', true, 302);
     }
 }
 
@@ -353,7 +353,7 @@ function pageView($pupupu, $twig)
             }
             $pupupu->rm($path);
             $target = pathDirname($path);
-            header("Location: ?", true, 302);
+            header('Location: ?', true, 302);
         } else {
             $pupupu->put($path, 'yml', $_POST['yml']);
             $pupupu->put($path, 'md', $_POST['md']);
