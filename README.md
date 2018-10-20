@@ -83,3 +83,9 @@ There are also some special filters available:
     Extra](https://michelf.ca/projects/php-markdown/extra/)
 -   `shift_headings` - useful to fit user-generated content into the document
     outline
+
+### Security
+
+Pupupu does not include an authentication system itself. It is strongly
+recommended to do this on the server level. Otherwise, **anyone can edit
+everything**!
