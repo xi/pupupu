@@ -176,6 +176,18 @@ class Pupupu
         return $subpages;
     }
 
+    public function getPages($path = '')
+    {
+        $result = array();
+        $result[] = $path;
+        foreach ($this->getSubpages($path) as $name => $p) {
+            foreach ($this->getPages($p) as $pp) {
+                $result[] = $pp;
+            }
+        }
+        return $result;
+    }
+
     public function getUrl($path)
     {
         return $this->targetUrl . $path . '/';
@@ -279,6 +291,13 @@ function ensureTrailingSlash()
     }
 }
 
+function pagesView($pupupu, $twig)
+{
+    echo $twig->render('pages.html', array(
+        'pages' => $pupupu->getPages(),
+    ));
+}
+
 function uploadView($pupupu, $twig)
 {
     $path = validatePath(substr($_GET['path'], 8));
@@ -318,8 +337,6 @@ function pageView($pupupu, $twig)
 {
     if (isset($_GET['add'])) {
         header("Location: ?path=${_GET['path']}/${_GET['add']}", true, 302);
-    } elseif ($_GET['path'] === '/_site') {
-        header('Location: ?path=_site', true, 302);
     } else {
         $path = validatePath($_GET['path']);
 
@@ -336,7 +353,7 @@ function pageView($pupupu, $twig)
             }
             $pupupu->rm($path);
             $target = pathDirname($path);
-            header("Location: ?path=$target", true, 302);
+            header("Location: ?", true, 302);
         } else {
             $pupupu->put($path, 'yml', $_POST['yml']);
             $pupupu->put($path, 'md', $_POST['md']);
@@ -357,7 +374,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     $twig->addFilter(new Twig_Filter('trans', 'trans'));
 
     if (empty($_GET['path']) && $_GET['path'] !== '') {
-        header('Location: ?path=', true, 302);
+        pagesView($pupupu, $twig);
     } elseif ($_GET['path'] === '_site') {
         siteView($pupupu, $twig);
     } elseif (substr($_GET['path'], 0, 8) === '_uploads') {

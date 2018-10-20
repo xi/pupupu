@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <ul class="file-list">
+        {% for path in pages %}
+            <li><a href="?path={{ path }}" class="file-list__main">
+                {{ path }}{% if '.' not in path %}/{% endif %}
+            </a></li>
+        {% endfor %}
+    </ul>
+
+    <form class="form--line">
+        <select name="path">
+            {% for path in pages %}
+                {% if '.' not in path %}
+                    <option value="{{ path }}">{{ path }}/</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <input name="add">
+        <button>{{ 'Add page'|trans }}</button>
+    </form>
+{% endblock %}
