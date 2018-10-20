@@ -28,6 +28,22 @@ function rmfile($path)
     rmdirs(dirname($path));
 }
 
+function rmr($path)
+{
+    if (file_exists($path)) {
+        if (is_dir($path)) {
+            foreach (scandir($path) as $name) {
+                if ($name !== '.' && $name !== '..') {
+                    rmr("$path/$name");
+                }
+            }
+            rmdir($path);
+        } else {
+            unlink($path);
+        }
+    }
+}
+
 function mkdirp($path)
 {
     if (!file_exists($path)) {
@@ -211,7 +227,7 @@ class Pupupu
 
     public function rmUpload($path)
     {
-        unlink($this->targetDir . '/files' . $path);
+        rmr($this->targetDir . '/files' . $path);
     }
 
     public function render($path, $verbose=false)

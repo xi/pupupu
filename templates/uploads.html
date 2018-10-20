@@ -11,13 +11,16 @@
                         <img src="static/file.png" class="file-list__icon" alt="{{ 'file'|trans }}">
                     {% endif %}
                     <a href="{{ file.url }}" target="_blank" class="file-list__main">{{ file.name }}</a>
+                {% else %}
+                    <img src="static/folder.png" class="file-list__icon" alt="{{ 'folder'|trans }}">
+                    <a href="?path=_uploads{{ file.path }}" class="file-list__main">{{ file.name }}/</a>
+                {% endif %}
+
+                {% if file.name != '..' %}
                     <form method="post">
                         <input type="hidden" name="name" value="{{ file.name }}">
                         <button class="button--danger button--small" name="delete">{{ 'Delete'|trans }}</button>
                     </form>
-                {% else %}
-                    <img src="static/folder.png" class="file-list__icon" alt="{{ 'folder'|trans }}">
-                    <a href="?path=_uploads{{ file.path }}" class="file-list__main">{{ file.name }}/</a>
                 {% endif %}
             </li>
         {% endfor %}
