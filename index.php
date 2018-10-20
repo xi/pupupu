@@ -193,33 +193,33 @@ class Pupupu
         return $this->targetUrl . $path . '/';
     }
 
-    public function upload($path, $file)
+    public function uploadFile($path, $file)
     {
         $p = $this->targetDir . '/files' . $path . '/' . $file['name'];
         mkdirp(dirname($p));
         move_uploaded_file($file['tmp_name'], $p);
     }
 
-    public function uploadFolder($path, $name)
+    public function createFileFolder($path, $name)
     {
         $p = $this->targetDir . '/files' . $path . '/' . $name;
         mkdirp($p);
     }
 
-    public function getUploads($path)
+    public function getFiles($path)
     {
-        $uploads = array();
+        $files = array();
         $p = $this->targetDir . '/files' . $path;
         $u = $this->targetUrl . '/files' . $path;
         foreach (scandir($p) as $name) {
             if ($name === '..' && $path !== '') {
-                $uploads[] = array(
+                $files[] = array(
                     'name' => $name,
                     'path' => pathDirname($path),
                     'is_file' => false,
                 );
             } elseif ($name !== '.' && $name !== '..') {
-                $uploads[] = array(
+                $files[] = array(
                     'name' => $name,
                     'path' => "$path/$name",
                     'url' => "$u/$name",
@@ -228,10 +228,10 @@ class Pupupu
                 );
             }
         }
-        return $uploads;
+        return $files;
     }
 
-    public function rmUpload($path)
+    public function rmFile($path)
     {
         rmr($this->targetDir . '/files' . $path);
     }
@@ -298,22 +298,22 @@ function pagesView($pupupu, $twig)
     ));
 }
 
-function uploadView($pupupu, $twig)
+function filesView($pupupu, $twig)
 {
-    $path = validatePath(substr($_GET['path'], 8));
+    $path = validatePath(substr($_GET['path'], 6));
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-        echo $twig->render('uploads.html', array(
-            'files' => $pupupu->getUploads($path),
+        echo $twig->render('files.html', array(
+            'files' => $pupupu->getFiles($path),
         ));
     } elseif (isset($_FILES['file'])) {
-        $pupupu->upload($path, $_FILES['file']);
+        $pupupu->uploadFile($path, $_FILES['file']);
         header("Location: ", true, 302);
     } elseif (isset($_POST['folder'])) {
-        $pupupu->uploadFolder($path, $_POST['folder']);
+        $pupupu->createFileFolder($path, $_POST['folder']);
         header("Location: ", true, 302);
     } elseif (isset($_POST['delete'])) {
-        $pupupu->rmUpload($path . '/' . $_POST['name']);
+        $pupupu->rmFile($path . '/' . $_POST['name']);
         header("Location: ", true, 302);
     } else {
         http_response_code(400);
@@ -377,8 +377,8 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
         pagesView($pupupu, $twig);
     } elseif ($_GET['path'] === '_site') {
         siteView($pupupu, $twig);
-    } elseif (substr($_GET['path'], 0, 8) === '_uploads') {
-        uploadView($pupupu, $twig);
+    } elseif (substr($_GET['path'], 0, 6) === '_files') {
+        filesView($pupupu, $twig);
     } else {
         pageView($pupupu, $twig);
     }
