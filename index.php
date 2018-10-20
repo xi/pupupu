@@ -4,6 +4,8 @@ require __DIR__ . '/vendor/autoload.php';
 use Symfony\Component\Yaml\Yaml;
 use Michelf\MarkdownExtra;
 
+class HttpException extends Exception {}
+
 function trans($s)
 {
     return $s;
@@ -82,8 +84,7 @@ function validatePath($path)
         substr($path, -1) === '/' ||
         strpos($path, '..') !== false
     ) {
-        http_response_code(400);
-        die();
+        throw new HttpException(trans('Not Found'), 404);
     } else {
         return $path;
     }
@@ -316,7 +317,7 @@ function filesView($pupupu, $twig)
         $pupupu->rmFile($path . '/' . $_POST['name']);
         header('Location: ', true, 302);
     } else {
-        http_response_code(400);
+        throw new HttpException(trans('Invalid request'), 400);
     }
 }
 
@@ -349,8 +350,7 @@ function pageView($pupupu, $twig)
             ));
         } elseif (isset($_POST['delete'])) {
             if ($path === '') {
-                http_response_code(400);
-                die();
+                throw new HttpException(trans('Cannot delete root'), 400);
             }
             $pupupu->rm($path);
             $target = pathDirname($path);
@@ -365,6 +365,14 @@ function pageView($pupupu, $twig)
     }
 }
 
+function errorView($pupupu, $twig, $error)
+{
+    http_response_code($error->getCode());
+    echo $twig->render('error.html', array(
+        'error' => $error,
+    ));
+}
+
 $pupupu = new Pupupu('..', '..', '..');
 
 if (isset($_SERVER['REQUEST_METHOD'])) {
@@ -374,14 +382,20 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     $twig = new Twig_Environment($loader);
     $twig->addFilter(new Twig_Filter('trans', 'trans'));
 
-    if (empty($_GET['path']) && $_GET['path'] !== '') {
-        pagesView($pupupu, $twig);
-    } elseif ($_GET['path'] === '_site') {
-        siteView($pupupu, $twig);
-    } elseif (substr($_GET['path'], 0, 6) === '_files') {
-        filesView($pupupu, $twig);
-    } else {
-        pageView($pupupu, $twig);
+    try {
+        if (empty($_GET['path']) && $_GET['path'] !== '') {
+            pagesView($pupupu, $twig);
+        } elseif ($_GET['path'] === '_site') {
+            siteView($pupupu, $twig);
+        } elseif (substr($_GET['path'], 0, 6) === '_files') {
+            filesView($pupupu, $twig);
+        } else {
+            pageView($pupupu, $twig);
+        }
+    } catch (Twig_Error_Loader $e) {
+        errorView($pupupu, $twig, new HttpException($e->getMessage(), 500));
+    } catch (HttpException $e) {
+        errorView($pupupu, $twig, $e);
     }
 } else {
     $pupupu->renderAll(true);
