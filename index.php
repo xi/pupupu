@@ -69,7 +69,7 @@ function shiftHeadings($html, $offset)
 
 function pathIsFile($path)
 {
-    return $path === '/_site' || strpos($path, '.') !== false;
+    return $path === '/_site' || $path === '/_users' || strpos($path, '.') !== false;
 }
 
 function pathDirname($path)
@@ -276,6 +276,12 @@ class Pupupu
             $this->render($path, $verbose);
         }
     }
+
+    public function checkPassword($name, $password)
+    {
+        $users = $this->getYaml('/_users');
+        return password_verify($password, $users[$name] ?? '');
+    }
 }
 
 function ensureTrailingSlash()
@@ -383,6 +389,11 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     $twig->addFilter(new Twig_Filter('trans', 'trans'));
 
     try {
+        if (!$pupupu->checkPassword($_SERVER['PHP_AUTH_USER'] ?? '', $_SERVER['PHP_AUTH_PW'] ?? '')) {
+            $msg = trans('Login required');
+            header('WWW-Authenticate: Basic realm="' . $msg . '"');
+            throw new HttpException($msg, 401);
+        }
         if (empty($_GET['path']) && $_GET['path'] !== '') {
             pagesView($pupupu, $twig);
         } elseif ($_GET['path'] === '_site') {

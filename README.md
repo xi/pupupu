@@ -40,6 +40,7 @@ The following files and folders are relevant for your project:
 -   `/_templates/default.html` - default template
 -   `/_content/` - source files
 -   `/_content/_site.yml` - contains site-wide config
+-   `/_content/_users.yml` - password hashes
 -   `/files/` - uploaded files
 
 ### Content
@@ -83,9 +84,3 @@ There are also some special filters available:
     Extra](https://michelf.ca/projects/php-markdown/extra/)
 -   `shift_headings` - useful to fit user-generated content into the document
     outline
-
-### Security
-
-Pupupu does not include an authentication system itself. It is strongly
-recommended to do this on the server level. Otherwise, **anyone can edit
-everything**!
