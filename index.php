@@ -67,11 +67,6 @@ function shiftHeadings($html, $offset)
     }, $html);
 }
 
-function pathIsFile($path)
-{
-    return $path === '/_site' || $path === '/_users' || strpos($path, '.') !== false;
-}
-
 function pathDirname($path)
 {
     return implode('/', array_slice(explode('/', $path), 0, -1));
@@ -108,9 +103,14 @@ class Pupupu
         $this->cache = array();
     }
 
+    protected function pathIsFile($path)
+    {
+        return $path === '/_site' || $path === '/_users' || strpos($path, '.') !== false;
+    }
+
     protected function getSrc($path, $ext)
     {
-        if (pathIsFile($path)) {
+        if ($this->pathIsFile($path)) {
             return $this->srcDir . '/_content' . $path . '.' . $ext;
         } else {
             return $this->srcDir . '/_content' . $path . '/index' . '.' . $ext;
@@ -119,7 +119,7 @@ class Pupupu
 
     protected function getTarget($path)
     {
-        if (pathIsFile($path)) {
+        if ($this->pathIsFile($path)) {
             return $this->targetDir . $path;
         } else {
             return $this->targetDir . $path . '/index.html';
