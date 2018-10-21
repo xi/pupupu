@@ -307,7 +307,7 @@ function pagesView($pupupu, $twig)
 
 function filesView($pupupu, $twig)
 {
-    $path = validatePath(substr($_GET['path'], 6));
+    $path = validatePath(substr($_GET['path'], 7));
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         echo $twig->render('files.html', array(
@@ -396,9 +396,9 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
         }
         if (empty($_GET['path']) && $_GET['path'] !== '') {
             pagesView($pupupu, $twig);
-        } elseif ($_GET['path'] === '_site') {
+        } elseif ($_GET['path'] === '/_site') {
             siteView($pupupu, $twig);
-        } elseif (substr($_GET['path'], 0, 6) === '_files') {
+        } elseif (substr($_GET['path'], 0, 7) === '/_files') {
             filesView($pupupu, $twig);
         } else {
             pageView($pupupu, $twig);
