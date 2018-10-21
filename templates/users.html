@@ -2,8 +2,8 @@
 
 {% block main %}
     <form method="post" class="form--line">
-        <input type="text" name="name">
-        <input type="password" name="password">
+        <input type="text" name="name" placeholder="{{ 'username'|trans }}">
+        <input type="password" name="password" placeholder="{{ 'password'|trans }}">
         <button>{{ 'Add user'|trans }}</button>
     </form>
 
