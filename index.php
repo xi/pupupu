@@ -398,6 +398,21 @@ function errorView($pupupu, $twig, $error)
     ));
 }
 
+function getAuth()
+{
+    $redirect = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+    if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+        $user = $_SERVER['PHP_AUTH_USER'];
+        $password = $_SERVER['PHP_AUTH_PW'];
+    } elseif (substr($redirect, 0, 6) === 'Basic ') {
+        list($user, $password) = explode(':' , base64_decode(substr($redirect, 6)));
+    }
+    return array(
+        'user' => $user ?? '',
+        'password' => $password ?? '',
+    );
+}
+
 $pupupu = new Pupupu('..', '..', '..');
 
 if (isset($_SERVER['REQUEST_METHOD'])) {
@@ -406,7 +421,8 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     $twig->addFilter(new Twig_Filter('trans', 'trans'));
 
     try {
-        if (!$pupupu->checkPassword($_SERVER['PHP_AUTH_USER'] ?? '', $_SERVER['PHP_AUTH_PW'] ?? '')) {
+        $auth = getAuth();
+        if (!$pupupu->checkPassword($auth['user'], $auth['password'])) {
             $msg = trans('Login required');
             header('WWW-Authenticate: Basic realm="' . $msg . '"');
             throw new HttpException($msg, 401);

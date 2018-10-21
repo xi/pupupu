@@ -1,3 +1,8 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule index.php - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+</IfModule>
+
 <FilesMatch "\.(htaccess|htpasswd|php)$">
     Order Allow,Deny
     Deny from all
