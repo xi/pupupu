@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <form method="post" class="form--line">
+        <input type="text" name="name">
+        <input type="password" name="password">
+        <button>{{ 'Add user'|trans }}</button>
+    </form>
+
+    <ul class="file-list">
+        {% for name, hash in users %}
+            <li>
+                <div class="file-list__main">{{ name }}</div>
+                <form method="post">
+                    <input type="hidden" name="name" value="{{ name }}">
+                    <button class="button--danger button--small" name="delete">{{ 'Delete'|trans }}</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

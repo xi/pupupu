@@ -160,6 +160,13 @@ class Pupupu
         return $this->cache[$key];
     }
 
+    public function putYaml($path, $data)
+    {
+        $key = "yml:$path";
+        $this->cache[$key] = $data;
+        $this->put($path, 'yml', Yaml::dump($data));
+    }
+
     public function getSubpages($path)
     {
         $subpages = array();
@@ -282,6 +289,17 @@ class Pupupu
         $users = $this->getYaml('/_users');
         return password_verify($password, $users[$name] ?? '');
     }
+
+    public function setPassword($name, $password=false)
+    {
+        $users = $this->getYaml('/_users');
+        if ($password) {
+            $users[$name] = password_hash($password, PASSWORD_DEFAULT);
+        } else {
+            unset($users[$name]);
+        }
+        $this->putYaml('/_users', $users);
+    }
 }
 
 function ensureTrailingSlash()
@@ -371,6 +389,21 @@ function pageView($pupupu, $twig)
     }
 }
 
+function usersView($pupupu, $twig)
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        echo $twig->render('users.html', array(
+            'users' => $pupupu->getYaml('/_users'),
+        ));
+    } elseif (isset($_POST['delete'])) {
+        $pupupu->setPassword($_POST['name'], false);
+        header('Location: ', true, 302);
+    } else {
+        $pupupu->setPassword($_POST['name'], $_POST['password']);
+        header('Location: ', true, 302);
+    }
+}
+
 function errorView($pupupu, $twig, $error)
 {
     http_response_code($error->getCode());
@@ -400,6 +433,8 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
             siteView($pupupu, $twig);
         } elseif (substr($_GET['path'], 0, 7) === '/_files') {
             filesView($pupupu, $twig);
+        } elseif (substr($_GET['path'], 0, 7) === '/_users') {
+            usersView($pupupu, $twig);
         } else {
             pageView($pupupu, $twig);
         }
