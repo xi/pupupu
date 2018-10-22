@@ -7,12 +7,9 @@ function trans($s)
 
 function rmdirs($path)
 {
-    if ($path !== '.' && file_exists($path)) {
-        try {
-            rmdir($path);
-            rmdirs(dirname($path));
-        } finally {
-        }
+    if ($path !== '.' && is_dir($path)) {
+        rmdir($path);
+        rmdirs(dirname($path));
     }
 }
 
