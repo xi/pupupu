@@ -71,6 +71,7 @@ a dot in their name can consequently not have subpages.)
 [Twig](https://twig.symfony.com/) is used as templating system. The following
 variables are available in a template:
 
+-   `path` - path to current page
 -   `page` - the data from the page's yaml file
 -   `body` - the contents of the page's markdown file
 -   `site` - the data from `/_content/_site.yml

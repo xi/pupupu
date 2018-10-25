@@ -185,6 +185,7 @@ class Pupupu
 
         $template = $page['_template'] ?? 'default.html';
         $html = $this->twig->render($template, array(
+            'path' => $path,
             'page' => $page,
             'site' => $site,
             'body' => $body,

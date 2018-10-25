@@ -14,9 +14,8 @@
             <a href="/" rel="home"><img src="/files/logo.jpg" class="logo" alt="{{ site.title }}"></a>
 
             <nav>
-                <a href="/" rel="home">Home</a>
                 {% for url, name in site.nav %}
-                    <a href="{{ url }}">{{ name }}</a>
+                    <a href="{{ url }}" {% if url == path %}class="active"{% endif %}>{{ name }}</a>
                 {% endfor %}
             </nav>
         </header>
