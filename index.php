@@ -24,6 +24,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     $loader = new Twig_Loader_Filesystem('templates');
     $twig = new Twig_Environment($loader);
     $twig->addFilter(new Twig_Filter('trans', 'trans'));
+    $twig->addGlobal('site_title', $_SERVER['HTTP_HOST']);
 
     try {
         $auth = getAuth();
