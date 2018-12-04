@@ -10,6 +10,9 @@
         <label>
             {{ 'Metadata'|trans }}
             <textarea name="yml">{{ yml }}</textarea>
+            {% if error %}
+                <p class="form-error">{{ 'Data is invalid'|trans }}</p>
+            {% endif %}
         </label>
 
         <div class="button-row">

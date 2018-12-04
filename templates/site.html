@@ -3,6 +3,9 @@
 {% block main %}
     <form method="POST">
         <textarea name="yml">{{ yml }}</textarea>
+        {% if error %}
+            <p class="form-error">{{ 'Data is invalid'|trans }}</p>
+        {% endif %}
 
         <div class="button-row">
             <div>

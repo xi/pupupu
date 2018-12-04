@@ -40,7 +40,7 @@ button {
 }
 
 .button--danger {
-	@include button-color(red, white, darkred);
+	@include button-color($color-invalid, white, darkred);
 }
 
 .button--small {
@@ -81,4 +81,9 @@ header {
 		width: 1em;
 		margin-right: $padding;
 	}
+}
+
+.form-error {
+	color: $color-invalid;
+	font-size: 80%;
 }
