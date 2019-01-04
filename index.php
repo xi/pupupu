@@ -10,7 +10,7 @@ function getAuth()
         $user = $_SERVER['PHP_AUTH_USER'];
         $password = $_SERVER['PHP_AUTH_PW'];
     } elseif (substr($redirect, 0, 6) === 'Basic ') {
-        list($user, $password) = explode(':' , base64_decode(substr($redirect, 6)));
+        list($user, $password) = explode(':', base64_decode(substr($redirect, 6)));
     }
     return array(
         'user' => $user ?? '',
