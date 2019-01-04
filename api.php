@@ -134,7 +134,7 @@ class Pupupu
     {
         $p = $this->targetDir . '/files' . $path . '/' . $file['name'];
         mkdirp(dirname($p));
-        move_uploaded_file($file['tmp_name'], $p);
+        _move_uploaded_file($file['tmp_name'], $p);
     }
 
     public function createFileFolder($path, $name)

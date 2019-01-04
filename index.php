@@ -44,6 +44,8 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
         } else {
             pageView($pupupu, $twig);
         }
+    } catch (WriteException $e) {
+        errorView($pupupu, $twig, new HttpException('unable to write: ' . $e->getMessage(), 500));
     } catch (Twig_Error_Loader $e) {
         errorView($pupupu, $twig, new HttpException($e->getMessage(), 500));
     } catch (HttpException $e) {
