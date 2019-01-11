@@ -3,6 +3,10 @@ install: vendor node_modules static/main.css
 
 vendor:
 	composer install
+	rm -rf vendor/twig/twig/doc
+	rm -rf vendor/twig/twig/src
+	rm -rf vendor/twig/twig/test
+	rm -rf vendor/symfony/yaml/Tests
 
 node_modules:
 	npm install
