@@ -1,10 +1,35 @@
 <?php declare(strict_types=1);
 
+require_once __DIR__ . '/vendor/autoload.php';
+use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Exception\ParseException;
+
 class WriteException extends Exception {}
+
+function get_translation()
+{
+    if (!include('HTTP2.php')) {
+        return array();
+    };
+
+    $http = new HTTP2();
+    $LANG = $http->negotiateLanguage(array(
+        'de' => true,
+    ));
+
+    try {
+        return Yaml::parseFile("trans/$LANG.yml");
+    } catch (ParseException $e) {
+        return array();
+    }
+}
+
+$TRANS = get_translation();
 
 function trans($s)
 {
-    return $s;
+    global $TRANS;
+    return isset($TRANS[$s]) ? $TRANS[$s] : $s;
 }
 
 function rmdirs($path)
