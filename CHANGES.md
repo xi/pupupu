@@ -1,4 +1,4 @@
-0.0.1 (unreleased)
+0.0.1 (2019-11-08)
 ------------------
 
 -	fix: include missing php files in zip
