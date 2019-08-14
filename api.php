@@ -84,7 +84,9 @@ class Pupupu
     public function rm($path, $lang='')
     {
         if (!$lang) {
-            $this->rm($path, 'de');
+            foreach ($this->getLangs() as $l) {
+                $this->rm($path, $l);
+            }
         }
 
         rmfile($this->getSrc($path, 'yml', $lang));
@@ -136,6 +138,12 @@ class Pupupu
             }
         }
         return $result;
+    }
+
+    public function getLangs()
+    {
+        $site = $this->getYaml('/_site');
+        return isset($site['_langs']) ? $site['_langs'] : [];
     }
 
     public function getUrl($path, $lang='')
@@ -215,7 +223,9 @@ class Pupupu
         _file_put_contents($target, $html);
 
         if (!$lang) {
-            $this->render($path, $verbose, 'de');
+            foreach ($this->getLangs() as $l) {
+                $this->render($path, $verbose, $l);
+            }
         }
     }
 

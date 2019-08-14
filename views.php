@@ -67,7 +67,7 @@ function siteView($pupupu, $twig)
         echo $twig->render('site.html', array(
             'path' => '/_site',
             'lang' => $lang,
-            'langs' => ['de'],
+            'langs' => $pupupu->getLangs(),
             'yml' => $pupupu->get('/_site', 'yml', $lang),
         ));
     } else {
@@ -99,7 +99,7 @@ function pageView($pupupu, $twig)
             echo $twig->render('page.html', array(
                 'path' => $path,
                 'lang' => $lang,
-                'langs' => ['de'],
+                'langs' => $pupupu->getLangs(),
                 'yml' => $pupupu->get($path, 'yml', $lang),
                 'md' => $pupupu->get($path, 'md', $lang),
                 'url' => $pupupu->getUrl($path, $lang),
