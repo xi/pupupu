@@ -138,9 +138,13 @@ class Pupupu
         return $result;
     }
 
-    public function getUrl($path)
+    public function getUrl($path, $lang='')
     {
-        return $this->targetUrl . $path . '/';
+        $root = $this->targetUrl;
+        if ($lang) {
+            $root .= '/' . $lang;
+        }
+        return $root . $path . '/';
     }
 
     public function uploadFile($path, $file)

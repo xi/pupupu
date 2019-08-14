@@ -16,6 +16,15 @@
             <a href="?path=%2F_site">{{ 'site'|trans }}</a>
             <a href="?path=%2F_users">{{ 'users'|trans }}</a>
         </nav>
+
+        {% if langs %}
+            <nav aria-label="{{ 'translations'|trans }}">
+                <a href="?path={{ path|e('url') }}">{{ 'default'|trans }}</a>
+                {% for l in langs %}
+                    <a href="?path={{ path|e('url') }}&lang={{ l|e('url') }}">{{ l }}</a>
+                {% endfor %}
+            </nav>
+        {% endif %}
     </header>
 
     <main>

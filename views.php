@@ -21,6 +21,15 @@ function validatePath($path)
     }
 }
 
+function validateLang($lang)
+{
+    if ($lang && preg_replace('/[a-zA-Z_-]/', '', $lang) !== '') {
+        throw new HttpException(trans('Not Found'), 404);
+    } else {
+        return $lang;
+    }
+}
+
 function pagesView($pupupu, $twig)
 {
     echo $twig->render('pages.html', array(
@@ -52,14 +61,19 @@ function filesView($pupupu, $twig)
 
 function siteView($pupupu, $twig)
 {
+    $lang = validateLang($_GET['lang']);
+
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         echo $twig->render('site.html', array(
-            'yml' => $pupupu->get('/_site', 'yml'),
+            'path' => '/_site',
+            'lang' => $lang,
+            'langs' => ['de'],
+            'yml' => $pupupu->get('/_site', 'yml', $lang),
         ));
     } else {
         try {
             Yaml::parse($_POST['yml']);
-            $pupupu->put('/_site', 'yml', $_POST['yml']);
+            $pupupu->put('/_site', 'yml', $_POST['yml'], $lang);
             $pupupu->renderAll();
             header('Location: ', true, 302);
         } catch (ParseException $e) {
@@ -79,26 +93,30 @@ function pageView($pupupu, $twig)
         header('Location: ?path=' . urlencode($path), true, 302);
     } else {
         $path = validatePath($_GET['path']);
+        $lang = validateLang($_GET['lang']);
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo $twig->render('page.html', array(
-                'yml' => $pupupu->get($path, 'yml'),
-                'md' => $pupupu->get($path, 'md'),
-                'url' => $pupupu->getUrl($path),
+                'path' => $path,
+                'lang' => $lang,
+                'langs' => ['de'],
+                'yml' => $pupupu->get($path, 'yml', $lang),
+                'md' => $pupupu->get($path, 'md', $lang),
+                'url' => $pupupu->getUrl($path, $lang),
             ));
         } elseif (isset($_POST['delete'])) {
             if ($path === '') {
                 throw new HttpException(trans('Cannot delete root'), 400);
             }
-            $pupupu->rm($path);
+            $pupupu->rm($path, $lang);
             $target = pathDirname($path);
             header('Location: ?', true, 302);
         } else {
             try {
                 Yaml::parse($_POST['yml']);
-                $pupupu->put($path, 'yml', $_POST['yml']);
-                $pupupu->put($path, 'md', $_POST['md']);
-                $pupupu->render($path);
+                $pupupu->put($path, 'yml', $_POST['yml'], $lang);
+                $pupupu->put($path, 'md', $_POST['md'], $lang);
+                $pupupu->render($path, $lang);
                 $pupupu->renderDynamic();
                 header('Location: ', true, 302);
             } catch (ParseException $e) {
