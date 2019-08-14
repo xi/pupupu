@@ -66,12 +66,19 @@ create a page called "feed.xml", the corresponding files are called
 `feed.xml.yml` and `feed.xml.md` and will generate `feed.xml`. (Pages that have
 a dot in their name can consequently not have subpages.)
 
+#### Translations
+
+You can define a list of language codes in `_site.yml` using the `_langs` key.
+For each language, a all pages will be generated to a separate folder. You can
+then overwrite the page content for every language.
+
 ### Templates
 
 [Twig](https://twig.symfony.com/) is used as templating system. The following
 variables are available in a template:
 
 -   `path` - path to current page
+-   `lang` - current language code
 -   `page` - the data from the page's yaml file
 -   `body` - the contents of the page's markdown file
 -   `site` - the data from `/_content/_site.yml
