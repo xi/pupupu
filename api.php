@@ -46,12 +46,16 @@ class Pupupu
         }
     }
 
-    protected function getTarget($path)
+    protected function getTarget($path, $lang='')
     {
+        $root = $this->targetDir;
+        if ($lang) {
+            $root .= '/' . $lang;
+        }
         if ($this->pathIsFile($path)) {
-            return $this->targetDir . $path;
+            return $root . $path;
         } else {
-            return $this->targetDir . $path . '/index.html';
+            return $root . $path . '/index.html';
         }
     }
 
@@ -173,7 +177,7 @@ class Pupupu
         rmr($this->targetDir . '/files' . $path);
     }
 
-    public function render($path, $verbose=false)
+    public function render($path, $verbose=false, $lang='')
     {
         if ($verbose) {
             echo trans('rendering') . " $path\n";
@@ -186,15 +190,20 @@ class Pupupu
         $template = $page['_template'] ?? 'default.html';
         $html = $this->twig->render($template, array(
             'path' => $path,
+            'lang' => $lang,
             'page' => $page,
             'site' => $site,
             'body' => $body,
             'pupupu' => $this,
         ));
 
-        $target = $this->getTarget($path);
+        $target = $this->getTarget($path, $lang);
         mkdirp(dirname($target));
         _file_put_contents($target, $html);
+
+        if (!$lang) {
+            $this->render($path, $verbose, 'de');
+        }
     }
 
     public function renderAll($verbose=false, $path='')
