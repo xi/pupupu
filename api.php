@@ -37,8 +37,11 @@ class Pupupu
         return $path === '/_site' || $path === '/_users' || strpos($path, '.') !== false;
     }
 
-    protected function getSrc($path, $ext)
+    protected function getSrc($path, $ext, $lang='')
     {
+        if ($lang) {
+            $ext = "$ext.$lang";
+        }
         if ($this->pathIsFile($path)) {
             return $this->srcDir . '/_content' . $path . '.' . $ext;
         } else {
@@ -59,45 +62,51 @@ class Pupupu
         }
     }
 
-    public function get($path, $ext)
+    public function get($path, $ext, $lang='')
     {
-        $p = $this->getSrc($path, $ext);
+        $p = $this->getSrc($path, $ext, $lang);
         if (file_exists($p)) {
             return file_get_contents($p);
+        } else if ($lang) {
+            return $this->get($path, $ext);
         } else {
             return '';
         }
     }
 
-    public function put($path, $ext, $content)
+    public function put($path, $ext, $content, $lang='')
     {
-        $p = $this->getSrc($path, $ext);
+        $p = $this->getSrc($path, $ext, $lang);
         mkdirp(dirname($p));
         _file_put_contents($p, $content);
     }
 
-    public function rm($path)
+    public function rm($path, $lang='')
     {
-        rmfile($this->getSrc($path, 'yml'));
-        rmfile($this->getSrc($path, 'md'));
-        rmfile($this->getTarget($path));
+        if (!$lang) {
+            $this->rm($path, 'de');
+        }
+
+        rmfile($this->getSrc($path, 'yml', $lang));
+        rmfile($this->getSrc($path, 'md', $lang));
+        rmfile($this->getTarget($path, $lang));
     }
 
-    public function getYaml($path)
+    public function getYaml($path, $lang='')
     {
-        $key = "yml:$path";
+        $key = "yml:$path:$lang";
         if (!in_array($key, $this->cache)) {
-            $v = Yaml::parse($this->get($path, 'yml'));
+            $v = Yaml::parse($this->get($path, 'yml', $lang));
             $this->cache[$key] = $v;
         }
         return $this->cache[$key];
     }
 
-    public function putYaml($path, $data)
+    public function putYaml($path, $data, $lang='')
     {
-        $key = "yml:$path";
+        $key = "yml:$path:$lang";
         $this->cache[$key] = $data;
-        $this->put($path, 'yml', Yaml::dump($data));
+        $this->put($path, 'yml', Yaml::dump($data), $lang);
     }
 
     public function getSubpages($path)
@@ -183,9 +192,9 @@ class Pupupu
             echo trans('rendering') . " $path\n";
         }
 
-        $page = $this->getYaml($path);
-        $site = $this->getYaml('/_site');
-        $body = $this->get($path, 'md');
+        $page = $this->getYaml($path, $lang);
+        $site = $this->getYaml('/_site', $lang);
+        $body = $this->get($path, 'md', $lang);
 
         $template = $page['_template'] ?? 'default.html';
         $html = $this->twig->render($template, array(
