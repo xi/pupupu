@@ -58,7 +58,7 @@ function siteView($pupupu, $twig)
         ));
     } else {
         try {
-            Yaml::parse($_POST['yml'], 'yml');
+            Yaml::parse($_POST['yml']);
             $pupupu->put('/_site', 'yml', $_POST['yml']);
             $pupupu->renderAll();
             header('Location: ', true, 302);
@@ -95,7 +95,7 @@ function pageView($pupupu, $twig)
             header('Location: ?', true, 302);
         } else {
             try {
-                Yaml::parse($_POST['yml'], 'yml');
+                Yaml::parse($_POST['yml']);
                 $pupupu->put($path, 'yml', $_POST['yml']);
                 $pupupu->put($path, 'md', $_POST['md']);
                 $pupupu->render($path);
