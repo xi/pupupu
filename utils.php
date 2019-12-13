@@ -36,10 +36,9 @@ function rmdirs($path)
 {
     if ($path !== '.' && is_dir($path)) {
         $success = rmdir($path);
-        if ($success === false) {
-            throw new WriteException($path);
+        if ($success) {
+            rmdirs(dirname($path));
         }
-        rmdirs(dirname($path));
     }
 }
 
