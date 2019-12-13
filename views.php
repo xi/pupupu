@@ -91,7 +91,6 @@ function pageView($pupupu, $twig)
                 throw new HttpException(trans('Cannot delete root'), 400);
             }
             $pupupu->rm($path);
-            $target = pathDirname($path);
             header('Location: ?', true, 302);
         } else {
             try {
