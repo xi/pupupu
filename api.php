@@ -22,12 +22,12 @@ class Pupupu
         $this->targetDir = $targetDir;
         $this->targetUrl = $targetUrl;
 
-        $loader = new Twig_Loader_Filesystem($srcDir . '/_templates');
-        $this->twig = new Twig_Environment($loader);
-        $this->twig->addFilter(new Twig_Filter('md', function ($string) {
+        $loader = new \Twig\Loader\FilesystemLoader($srcDir . '/_templates');
+        $this->twig = new \Twig\Environment($loader);
+        $this->twig->addFilter(new \Twig\TwigFilter('md', function ($string) {
             return MarkdownExtra::defaultTransform($string);
         }));
-        $this->twig->addFilter(new Twig_Filter('shift_headings', 'shiftHeadings'));
+        $this->twig->addFilter(new \Twig\TwigFilter('shift_headings', 'shiftHeadings'));
 
         $this->cache = array();
     }

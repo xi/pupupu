@@ -21,9 +21,9 @@ function getAuth()
 $pupupu = new Pupupu('..', '..', '..');
 
 if (isset($_SERVER['REQUEST_METHOD'])) {
-    $loader = new Twig_Loader_Filesystem('templates');
-    $twig = new Twig_Environment($loader);
-    $twig->addFilter(new Twig_Filter('trans', 'trans'));
+    $loader = new \Twig\Loader\FilesystemLoader('templates');
+    $twig = new \Twig\Environment($loader);
+    $twig->addFilter(new \Twig\TwigFilter('trans', 'trans'));
     $twig->addGlobal('site_title', $_SERVER['HTTP_HOST']);
 
     try {
@@ -46,7 +46,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
         }
     } catch (WriteException $e) {
         errorView($pupupu, $twig, new HttpException('unable to write: ' . $e->getMessage(), 500));
-    } catch (Twig_Error_Loader $e) {
+    } catch (\Twig\Error\LoaderError $e) {
         errorView($pupupu, $twig, new HttpException($e->getMessage(), 500));
     } catch (HttpException $e) {
         errorView($pupupu, $twig, $e);
