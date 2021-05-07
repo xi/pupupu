@@ -18,11 +18,8 @@
     });
 
     var resize = function(event) {
-        /* 0-timeout to get the already changed text */
-        setTimeout(() => {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 5 + 'px';
-        }, 0);
+        this.style.height = '0';
+        this.style.height = this.scrollHeight + this.offsetHeight + 'px';
     };
 
     on(document, 'input', 'textarea', resize);
