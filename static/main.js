@@ -25,9 +25,7 @@
         }, 0);
     };
 
-    on(document, 'init', 'textarea', resize);
-    on(document, 'change', 'textarea', resize);
-    on(document, 'keydown', 'textarea', resize);
+    on(document, 'input', 'textarea', resize);
     document.querySelectorAll('textarea').forEach(function(e) {
         resize.call(e);
     });
