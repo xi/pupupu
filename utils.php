@@ -6,16 +6,39 @@ use Symfony\Component\Yaml\Exception\ParseException;
 
 class WriteException extends Exception {}
 
+// https://gist.github.com/ch-gilbert/a376704763629691a828
+// https://www.rfc-editor.org/rfc/rfc9110#name-accept-language
+function negotiate_language($available_languages)
+{
+    $bestlang = $available_languages[0];
+    $bestqval = 0;
+
+    if (empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        return $bestlang;
+    }
+
+    $regexp = "/(([a-z]+)(-[a-z-]+)*)(\s*;\s*q=([01]\.[0-9]+))?\s*[,$]/i";
+    preg_match_all($regexp, $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches, PREG_SET_ORDER);
+
+    foreach ($matches as $match) {
+        $language = strtolower($match[0]);
+        $langprefix = strtolower($match[1]);
+        $qvalue = !empty($match[4]) ? floatval($match[4]) : 1.0;
+
+        if (in_array($language, $available_languages) && ($qvalue > $bestqval)) {
+            $bestlang = $language;
+            $bestqval = $qvalue;
+        } else if (in_array($langprefix, $available_languages) && ($qvalue * 0.9 > $bestqval)) {
+            $bestlang = $langprefix;
+            $bestqval = $qvalue * 0.9;
+        }
+    }
+    return $bestlang;
+}
+
 function get_translation()
 {
-    if (!include('HTTP2.php')) {
-        return array();
-    };
-
-    $http = new HTTP2();
-    $LANG = $http->negotiateLanguage(array(
-        'de' => true,
-    ));
+    $LANG = negotiate_language(['en', 'de']);
 
     try {
         return Yaml::parseFile("trans/$LANG.yml");
